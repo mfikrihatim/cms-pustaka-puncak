@@ -68,17 +68,17 @@
             <!-- User Account: style can be found in dropdown.less -->
             <li class="dropdown user user-menu">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="<?php echo base_url('upload/') . $foto; ?>" width="50px" height="50px" style="border-radius:100%;">
-                <span class="hidden-xs"><?php echo $username; ?></span>
+                <img src="<?php echo base_url('upload/user_profile') . $foto_profile; ?>" width="50px" height="50px" style="border-radius:100%;">
+                <span class="hidden-xs"><?php echo $nama; ?></span>
               </a>
               <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header">
-                  <img src="<?php echo base_url('upload/') . $foto; ?>">
+                  <img src="<?php echo base_url('upload/user_profile') . $foto_profile; ?>">
 
                   <p>
 
-                    <span class="hidden-xs"><?php echo $username; ?></span>
+                    <span class="hidden-xs"><?php echo $nama; ?></span>
                   </p>
                 </li>
                 <!-- Menu Body -->
@@ -128,11 +128,11 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
           <div class="pull-left image">
-            <img src="<?php echo base_url('upload/') . $foto; ?>" with="50px" height="50px">
+            <img src="<?php echo base_url('upload/user_profile') . $foto_profile; ?>" with="50px" height="50px">
 
           </div>
           <div class="pull-left info">
-            <p><?php echo $username; ?></p>
+            <p><?php echo $nama; ?></p>
             <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
           </div>
         </div>
@@ -150,61 +150,7 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
           <li class="header">MAIN NAVIGATION</li>
-          <!-- <li>
-          <a href="<?php echo site_url('Welcome/DataDaftarUlang'); ?>">
-            <i class="fa fa-dashboard"> <span>Home</i></span>
-          </a>
-        </li> -->
-          <!-- <li>
-          <a href="<?php echo site_url('Welcome/DataUser'); ?>">
-            <i class="fa fa-dashboard"> <span>User</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataPegawai'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Pegawai</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataSiswa'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Siswa</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataKelas'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Kelas</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataPelajaran'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Pelajaran</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataJenisPembayaran'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Jenis Pembayaran</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataGuru'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Guru</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataWaliKelas'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Wali Kelas</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataStaff'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Staff</i></span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo site_url('Welcome/DataSettingTa'); ?>">
-            <i class="fa fa-dashboard"> <span>Data Setting Ta</i></span>
-          </a>
-        </li> -->
+     
           <li class="active treeview menu-open">
             <a href="#">
               <i class="fa  fa-database"></i> <span>Master Data</span>
@@ -214,36 +160,12 @@
             </a>
             <ul class="treeview-menu">
 
-              <!-- <li>
-                <a href="<?php echo site_url('Welcome/DataProduk'); ?>">
-                  <i class="fa  fa-plus"> <span> DATA PRODUK</i></span>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataUser'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA USER</i></span>
                 </a>
               </li>
-              <li>
-                <a href="<?php echo site_url('Welcome/DataCostumer'); ?>">
-                  <i class="fa  fa-plus"> <span> DATA COSTUMER</i></span>
-                </a>
-              </li>
-              <li>
-                <a href="<?php echo site_url('Welcome/DataPrincipal'); ?>">
-                  <i class="fa  fa-plus"> <span> DATA PRINCIPAL</i></span>
-                </a>
-              </li>
-              <li>
-                <a href="<?php echo site_url('Welcome/DataSlide'); ?>">
-                  <i class="fa  fa-plus"> <span> DATA SLIDE</i></span>
-                </a>
-              </li>
-              <li>
-                <a href="<?php echo site_url('Welcome/DataKategori'); ?>">
-                  <i class="fa  fa-plus"> <span> KATEGORI</i></span>
-                </a>
-              </li>
-              <li>
-                <a href="<?php echo site_url('Welcome/DataJenisProduk'); ?>">
-                  <i class="fa  fa-plus"> <span> DATA JENIS PRODUK</i></span>
-                </a>
-              </li> -->
+            
 
 
               <li>

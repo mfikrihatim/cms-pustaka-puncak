@@ -1,31 +1,29 @@
 <form action="<?php echo site_url('Welcome/UpdateDataUser'); ?>" method="post" enctype="multipart/form-data">
 <!-- Staff -->
   <!-- Username -->
-                <div class="form-group">
-                  <label>Username</label>
-                  <input type="hidden" name="kd_user" value="<?php echo $detail['kd_user']; ?>" class="form-control">
-                  <input type="text" class="form-control" name="username" value="<?php echo $detail['username']; ?>" placeholder="Username">
+  <div class="form-group">
+                  <label>Email User</label>
+                  <input type="hidden" name="id_user" value="<?php echo $detail['id_user']; ?>" class="form-control">
+                  <input type="email" class="form-control" name="email_user" value="<?php echo $detail['email_user']; ?>" placeholder="Masukan Email">
                 </div> 
   <!-- Password -->
                 <div class="form-group">
-                  <label for="exampleInputPassword1">Password</label>
-                  <input type="text" class="form-control" name="password" value="<?php echo $detail['password']; ?>" id="exampleInputPassword1" placeholder="Password">
-                </div>
+                  <label>Nama User</label>
+                  <input type="text" class="form-control" name="nama" value="<?php echo $detail['nama']; ?>" placeholder="Masukan Nama User">
+                </div> 
                 <div class="form-group">
-          <label>Akses Level</label>
-          <div class="radio">
-            <label>
-              <input type="radio" value="User" name="acc_lvl" id="optionsRadios1" required 
-              <?php if($detail['acc_lvl'] == "User"){ echo 'checked'; } ?>>
-              User
-            </label>
-            <label>
-              <input type="radio" value="Admin" name="acc_lvl" id="optionsRadios1" required <?php if($detail['acc_lvl'] == "Admin"){ echo 'checked'; } ?>>
-              Admin
-            </label>
-          </div>
-        </div>   
-   <!-- Status_user -->
+                  <label for="exampleInputPassword1">Password</label>
+                  <input type="password" class="form-control" name="password" id="exampleInputPassword1" value="<?php echo $detail['password']; ?>" placeholder="Masukan Password">
+                </div>
+                
+              
+             
+                <input type="hidden" name="created_by" value="<?php echo $detail['created_by']; ?>" class="form-control">
+                <input type="hidden" name="created_date" value="<?php echo $detail['created_date']; ?>" class="form-control">
+                <input type="hidden" name="updated_by"  class="form-control">
+                <input type="hidden" name="updated_date" class="form-control">
+                <input type="hidden" name="is_active" class="form-control" value="1">
+   <!-- Status_user --> 
                 <!-- <div class="form-group">
                   <label>Status User</label>
                   <div class="radio">
@@ -43,7 +41,7 @@
                 </div> -->
   
                 <div class="form-group">
-                <img src="<?php echo base_url('upload/'). $detail['foto']; ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+                <img src="<?php echo base_url('upload/user_profile'). $detail['foto_profile']; ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
                   <label for="exampleInputFile">File input</label>
                   <input type="file" name="userfile"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->

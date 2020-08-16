@@ -17,8 +17,8 @@ class MLogin extends CI_Model
 			$row = $query->row();
 			$this->load->library('session');
 			$this->session->set_userdata('id_user', $row->id_user);
-			$this->session->set_userdata('username', $row->username);
-			$this->session->set_userdata('foto', $row->foto);
+			$this->session->set_userdata('nama', $row->nama);
+			$this->session->set_userdata('foto_profile', $row->foto_profile);
 			return $row->id_user;
 		} else {
 			return false;

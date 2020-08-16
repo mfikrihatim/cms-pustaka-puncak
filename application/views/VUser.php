@@ -18,12 +18,29 @@
             <div class="box-body table-responsive no-padding">
               <table class="table table-hover">
                 <tr>
-                  <th>Kode User</th>
-                  <!-- <th>Kode Pegawai</th> -->
+                  <th>ID User</th>
+                  <th>Email User</th>
+                  <th>Nama User</th>
                   <th>Username</th>
                   <th>Password</th>
-                  <th>Acces Level</th>
-                  <th>Foto</th>
+                  <th>No Telfon User</th>
+                  <th>Kode Verifikasi</th>
+                  <th>Tanggal Verifikasi</th>
+                  <th>Foto Profile</th>
+                  <th>Alamat</th>
+                  <th>Tempat Lahir</th>
+                  <th>Tanggal Lahir</th>
+                  <th>Jenis Kelamin</th>
+                  <th>ID Tipe</th>
+                  <th>ID Referral</th>
+                  <th>Points</th>
+                  <th>Created By</th>
+                  <th>Created Date</th>
+                  <th>Update by</th>
+                  <th>Update date</th>
+                  <th>Delete By</th>
+                  <th>Delete date</th>
+                  <th>Is Avtive </th>
                   <th>Tools</th>
                 </tr>
                 <?php
@@ -33,15 +50,33 @@
 		{
 	?>
       <tr>
-          <td><?php echo $ReadDS->kd_user; ?></td>
-          <!-- <td><?php echo $ReadDS->kd_staff; ?></td> -->
+          <td><?php echo $ReadDS->id_user; ?></td>
+          <td><?php echo $ReadDS->email_user; ?></td>
+          <td><?php echo $ReadDS->nama; ?></td>
 					<td><?php echo $ReadDS->username; ?></td>
-					<td><?php echo $ReadDS->password; ?></td>
-          <td><?php echo $ReadDS->acc_lvl; ?></td>
-           <td ><img width="50px" height="50px" src="<?php echo base_url('upload/'). $ReadDS->foto; ?>"></td>
+          <td><?php echo $ReadDS->password; ?></td>
+          <td><?php echo $ReadDS->tlp_user; ?></td>
+          <td><?php echo $ReadDS->kode_verifikasi; ?></td>
+          <td><?php echo $ReadDS->tgl_verifikasi; ?></td>
+          <td ><img width="50px" height="50px" src="<?php echo base_url('upload/user_profile'). $ReadDS->foto_profile; ?>"></td>
+          <td><?php echo $ReadDS->alamat; ?></td>
+          <td><?php echo $ReadDS->tmp_lahir; ?></td>
+          <td><?php echo $ReadDS->tgl_lahir; ?></td>
+          <td><?php echo $ReadDS->jenis_kelamin; ?></td>
+          <td><?php echo $ReadDS->id_tipe; ?></td>
+          <td><?php echo $ReadDS->kode_referral; ?></td>
+          <td><?php echo $ReadDS->points; ?></td>
+          <td><?php echo $ReadDS->created_by; ?></td>
+          <td><?php echo $ReadDS->created_date; ?></td>
+          <td><?php echo $ReadDS->updated_by; ?></td>
+          <td><?php echo $ReadDS->updated_date; ?></td>
+          <td><?php echo $ReadDS->deleted_by; ?></td>
+          <td><?php echo $ReadDS->deleted_date; ?></td>
+          <td><?php echo $ReadDS->is_active; ?></td>
+
 					<td>
-					<a href="<?php echo site_url('Welcome/DataUser/'.$ReadDS->kd_user.'/view') ?>"><i class="fa fa-edit"></i></a>
-					<a href="<?php echo site_url('Welcome/DeleteDataUser/'.$ReadDS->kd_user) ?>"><i class="fa fa-fw fa-trash"></i></a>
+					<a href="<?php echo site_url('Welcome/DataUser/'.$ReadDS->id_user.'/view') ?>"><i class="fa fa-edit"></i></a>
+					<a href="<?php echo site_url('Welcome/DeleteDataUser/'.$ReadDS->id_user) ?>"><i class="fa fa-fw fa-trash"></i></a>
 					</td>
       </tr>
                 <?php		
