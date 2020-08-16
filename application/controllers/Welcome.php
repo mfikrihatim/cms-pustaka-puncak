@@ -12,8 +12,8 @@ class Welcome extends CI_Controller
 	public function index()
 	{
 		if ($this->session->userdata('Login')) {
-			$data['username'] = $this->session->userdata('username');
-			$data['foto'] = $this->session->userdata('foto');
+			$data['nama'] = $this->session->userdata('nama');
+			$data['foto_profile'] = $this->session->userdata('foto_profile');
 			$data['content'] = 'VBlank';
 			$this->load->view('welcome_message', $data);
 		} else {
@@ -99,21 +99,40 @@ class Welcome extends CI_Controller
 
 	public function DataUser()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 		if ($this->uri->segment(4) == 'view') {
-			$kd_user = $this->uri->segment(3);
-			$tampil = $this->MSudi->GetDataWhere('tbl_users', 'kd_user', $kd_user)->row();
-			$data['detail']['kd_user'] = $tampil->kd_user;
-			$data['detail']['username'] = $tampil->username;
+			$id_user = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_user', 'id_user', $id_user)->row();
+			$data['detail']['id_user'] = $tampil->id_user;
+			$data['detail']['email_user'] = $tampil->email_user;
+			$data['detail']['nama'] = $tampil->nama;
 			$data['detail']['password'] = $tampil->password;
-			$data['detail']['acc_lvl'] = $tampil->acc_lvl;
-			$data['detail']['foto'] = $tampil->foto;
+			$data['detail']['tlp_user'] = $tampil->tlp_user;
+			$data['detail']['kode_verifikasi'] = $tampil->kode_verifikasi;
+			$data['detail']['tgl_verifikasi'] = $tampil->tgl_verifikasi;
+			$data['detail']['foto_profile'] = $tampil->foto_profile;
+			$data['detail']['alamat'] = $tampil->alamat;
+			$data['detail']['tmp_lahir'] = $tampil->tmp_lahir;
+			$data['detail']['jenis_kelamin'] = $tampil->jenis_kelamin;
+			$data['detail']['id_tipe'] = $tampil->id_tipe;
+			$data['detail']['id_number'] = $tampil->id_number;
+			$data['detail']['kode_referral'] = $tampil->kode_referral;
+			$data['detail']['points'] = $tampil->points;
+			$data['detail']['created_by'] = $tampil->created_by;
+			$data['detail']['created_date'] = $tampil->created_date;
+			$data['detail']['updated_by'] = $tampil->updated_by;
+			$data['detail']['updated_date'] = $tampil->updated_date;
+			$data['detail']['deleted_by'] = $tampil->deleted_by;
+			$data['detail']['deleted_date'] = $tampil->deleted_date;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['detail']['username'] = $tampil->username;
+			
 			$data['content'] = 'VFormUpdateUser';
 		} else {
 			// $join="tbl_staff.kd_staff = tbl_users.kd_staff AND tbl_pegawai.kd_pegawai = tbl_staff.kd_pegawai";
 			// $data['DataUser']=$this->MSudi->GetData2Join('tbl_users','tbl_staff','tbl_pegawai', $join)->result();
-			$data['DataUser'] = $this->MSudi->GetData('tbl_users');
+			$data['DataUser'] = $this->MSudi->GetData('tbl_user');
 			$data['content'] = 'VUser';
 		}
 
@@ -124,24 +143,45 @@ class Welcome extends CI_Controller
 
 	public function VFormAddUser()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
 		$data['content'] = 'VFormAddUser';
 		$this->load->view('welcome_message', $data);
 	}
 	public function AddDataUser()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-		$add['kd_user'] = $this->input->post('kd_user');
-		$add['username'] = $this->input->post('username');
+		
+		$data['nama'] = $this->session->userdata('nama');
+
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		// $add['id_user'] = $this->input->post('id_user');
+		$add['email_user'] = $this->input->post('email_user');
+		$add['nama'] = $this->input->post('nama');
 		$add['password'] = $this->input->post('password');
-		$add['acc_lvl'] = $this->input->post('acc_lvl');
+		$add['tlp_user'] = NULL;
+		$add['kode_verifikasi'] = NULL;
+		$add['tgl_verifikasi'] = NULL;
+		$add['alamat'] = NULL;
+		$add['tmp_lahir'] = NULL;
+		$add['jenis_kelamin'] = NULL;
+		$add['id_tipe'] = NULL;
+		$add['id_number'] = NULL;
+		$add['kode_referral'] = NULL;
+		$add['points'] = NULL;
+		$add['created_by'] = $data['nama'] ;
+		$add['created_date'] = date("Y-m-d H:i:s");
+		$add['updated_by'] = NULL;
+		$add['updated_date'] = NULL;
+		$add['deleted_by'] = NULL;
+		$add['deleted_date'] = NULL;
+		$add['is_active'] = $this->input->post('is_active');
+		$add['username'] = $this->input->post('email_user');
+		
 		// $add['foto_user']= $this->input->post('foto_user');
 		// $add['st_user']= $this->input->post('st_user');  
 
-		$config['upload_path'] = '././upload';
+		$config['upload_path'] = './upload/user_profile';
 		$config['allowed_types'] = 'gif|jpg|png';
 		$this->load->library('upload', $config);
 		if (!$this->upload->do_upload('userfile')) {
@@ -149,47 +189,72 @@ class Welcome extends CI_Controller
 			redirect(site_url('Welcome/VFormAddUser'));
 		} else {
 			$data = array('upload_data' => $this->upload->data());
-			$add['foto'] = implode($this->upload->data());
+			$add['foto_profile'] = implode($this->upload->data());
 		}
-		$this->MSudi->AddData('tbl_users', $add);
-		\redirect(site_url('Welcome/DataUser'));
+		$this->MSudi->AddData('tbl_user', $add);
+		redirect(site_url('Welcome/DataUser'));
 	}
 
 	public function UpdateDataUser()
-	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+	{	
+		$data['nama'] = $this->session->userdata('nama');
 
-		$kd_user = $this->input->post('kd_user');
-		$update['username'] = $this->input->post('username');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$id_user = $this->input->post('id_user');
+		// $update['id_user'] = $this->input->post('id_user');
+		$update['email_user'] = $this->input->post('email_user');
+		$update['nama'] = $this->input->post('nama');
 		$update['password'] = $this->input->post('password');
-		$update['acc_lvl'] = $this->input->post('acc_lvl');
-		//$update['foto_user']= $this->input->post('foto_user');
-		// $update['st_user']= $this->input->post('st_user');
+		$update['tlp_user'] = NULL;
+		$update['kode_verifikasi'] = NULL;
+		$update['tgl_verifikasi'] = NULL;
+		$update['alamat'] = NULL;
+		$update['tmp_lahir'] = NULL;
+		$update['jenis_kelamin'] = NULL;
+		$update['id_tipe'] = NULL;
+		$update['id_number'] = NULL;
+		$update['kode_referral'] = NULL;
+		$update['points'] = NULL;
+		$update['created_by'] = $this->input->post('created_by');
+		$update['created_date'] = $this->input->post('created_date');
+		$update['updated_by'] =$data['nama'] ;
+		$update['updated_date'] =date("Y-m-d H:i:s");
+		$update['deleted_by'] = NULL;
+		$update['deleted_date'] = NULL;
+		$update['is_active'] = $this->input->post('is_active');
+		$update['username'] = $this->input->post('email_user');
+		
+		// $add['foto_user']= $this->input->post('foto_user');
+		// $add['st_user']= $this->input->post('st_user');  
 
-		$config['upload_path'] = '././upload';
-		$config['allowed_types'] = 'gif|jpg|png';
+		$config['upload_path']='./upload/user_profile';
+		$config['allowed_types']='gif|jpg|png|jpeg';
+
 		$this->load->library('upload', $config);
-		if (!$this->upload->do_upload('userfile')) {
-			$error = array('error' => $this->upload->display_errors());
-			//redirect(site_url('Welcome/VFormUpdateUser'));
+		if (!$this->upload->do_upload('userfile'))
+		{
+			$error=array('error'=>$this->upload->display_errors());
+			/*redirect(site_url('Welcome/VFormUpdateUser'));*/
 
-		} else {
-			$data = array('upload_data' => $this->upload->data());
-			$update['foto'] = implode($this->upload->data());
 		}
+		else
+		{
+			$data=array('upload_data'=>$this->upload->data());
+			$update['foto_profile']=implode($this->upload->data());
 
-		$this->MSudi->UpdateData('tbl_users', 'kd_user', $kd_user, $update);
+		}
+		$this->MSudi->UpdateData('tbl_user', 'id_user', $id_user, $update);
 		redirect(site_url('Welcome/DataUser'));
 	}
 
 
+
 	public function DeleteDataUser()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-		$kd_user = $this->uri->segment('3');
-		$this->MSudi->DeleteData('tbl_users', 'kd_user', $kd_user);
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$id_user = $this->uri->segment('3');
+		$this->MSudi->DeleteData('tbl_user', 'id_user', $id_user);
 		redirect(site_url('Welcome/DataUser'));
 	}
 

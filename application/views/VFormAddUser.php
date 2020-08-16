@@ -15,27 +15,24 @@
                 </div> --> 
   <!-- Username -->
                 <div class="form-group">
-                  <label>Username</label>
-                  <input type="text" class="form-control" name="username" placeholder="Username">
+                  <label>Email User</label>
+                  <input type="email" class="form-control" name="email_user" placeholder="Masukan Email">
                 </div> 
   <!-- Password -->
                 <div class="form-group">
-                  <label for="exampleInputPassword1">Password</label>
-                  <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
-                </div>
+                  <label>Nama User</label>
+                  <input type="text" class="form-control" name="nama" placeholder="Masukan Nama User">
+                </div> 
                 <div class="form-group">
-                          <label>Akses Level</label>
-                          <div class="radio">
-                            <label>
-                              <input type="radio" value="User" name="acc_lvl" id="optionsRadios1" required>
-                              User
-                            </label>
-                            <label>
-                              <input type="radio" value="Admin" name="acc_lvl" id="optionsRadios1" required>
-                              Admin
-                            </label>
-                  </div>
-                </div>   
+                  <label for="exampleInputPassword1">Password</label>
+                  <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Masukan Password">
+                </div>
+                
+              
+             
+                <input type="hidden" name="created_by" class="form-control">
+                <input type="hidden" name="created_date" class="form-control">
+                <input type="hidden" name="is_active" class="form-control" value="1">
    <!-- Status_user -->
                 <!-- <div class="form-group">
                   <label>Status User</label>
