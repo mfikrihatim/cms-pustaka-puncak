@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>BACKEND</title>
+  <title>CMS ADMIN</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -47,7 +47,7 @@
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini">S<b>P</b>P</span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b>BACKEND</b></span>
+        <span class="logo-lg"><b>CMS ADMIN</b></span>
       </a>
       <!-- Header Navbar: style can be found in header.less -->
       <nav class="navbar navbar-static-top">
@@ -68,13 +68,13 @@
             <!-- User Account: style can be found in dropdown.less -->
             <li class="dropdown user user-menu">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="<?php echo base_url('upload/user_profile') . $foto_profile; ?>" width="50px" height="50px" style="border-radius:100%;">
+                <img src="<?php echo base_url('upload/user_profile/') . $foto_profile; ?>" width="50px" height="50px" style="border-radius:100%;">
                 <span class="hidden-xs"><?php echo $nama; ?></span>
               </a>
               <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header">
-                  <img src="<?php echo base_url('upload/user_profile') . $foto_profile; ?>">
+                  <img src="<?php echo base_url('upload/user_profile/') . $foto_profile; ?>">
 
                   <p>
 
@@ -128,7 +128,7 @@
         <!-- Sidebar user panel -->
         <div class="user-panel">
           <div class="pull-left image">
-            <img src="<?php echo base_url('upload/user_profile') . $foto_profile; ?>" with="50px" height="50px">
+            <img src="<?php echo base_url('upload/user_profile/') . $foto_profile; ?>" with="50px" height="50px">
 
           </div>
           <div class="pull-left info">
@@ -163,6 +163,17 @@
               <li>
                 <a href="<?php echo site_url('Welcome/DataUser'); ?>">
                   <i class="fa  fa-plus"> <span> DATA USER</i></span>
+                </a>
+              </li>
+
+              <li>
+                <a href="<?php echo site_url('Welcome/DataPromo'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA PROMO</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataCustomer'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA CUSTOMER</i></span>
                 </a>
               </li>
             
@@ -347,7 +358,7 @@
       <!-- Content Header (Page header) -->
       <section class="content-header">
         <h1>
-          SISTEM BACKEND
+          CMS ADMIN
           <small>Server</small>
         </h1>
         <ol class="breadcrumb">
