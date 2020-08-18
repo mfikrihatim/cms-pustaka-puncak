@@ -181,16 +181,16 @@ class Welcome extends CI_Controller
 		// $add['foto_user']= $this->input->post('foto_user');
 		// $add['st_user']= $this->input->post('st_user');  
 
-		// $config['upload_path'] = './upload/user_profile';
-		// $config['allowed_types'] = 'gif|jpg|png';
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile')) {
-		// 	$error = array('error' => $this->upload->display_errors());
-		// 	redirect(site_url('Welcome/VFormAddUser'));
-		// } else {
-		// 	$data = array('upload_data' => $this->upload->data());
-		// 	$add['foto_profile'] = implode($this->upload->data());
-		// }
+		$config['upload_path'] = './upload/user_profile';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload('userfile')) {
+			$error = array('error' => $this->upload->display_errors());
+			redirect(site_url('Welcome/VFormAddUser'));
+		} else {
+			$data = array('upload_data' => $this->upload->data());
+			$add['foto_profile'] = implode($this->upload->data());
+		}
 		$this->MSudi->AddData('tbl_user', $add);
 		redirect(site_url('Welcome/DataUser'));
 	}
@@ -227,22 +227,22 @@ class Welcome extends CI_Controller
 		// $add['foto_user']= $this->input->post('foto_user');
 		// $add['st_user']= $this->input->post('st_user');  
 
-		// $config['upload_path']='./upload/user_profile';
-		// $config['allowed_types']='gif|jpg|png|jpeg';
+		$config['upload_path']='./upload/user_profile';
+		$config['allowed_types']='gif|jpg|png|jpeg';
 
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile'))
-		// {
-		// 	$error=array('error'=>$this->upload->display_errors());
-		// 	/*redirect(site_url('Welcome/VFormUpdateUser'));*/
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload('userfile'))
+		{
+			$error=array('error'=>$this->upload->display_errors());
+			/*redirect(site_url('Welcome/VFormUpdateUser'));*/
 
-		// }
-		// else
-		// {
-		// 	$data=array('upload_data'=>$this->upload->data());
-		// 	$update['foto_profile']=implode($this->upload->data());
+		}
+		else
+		{
+			$data=array('upload_data'=>$this->upload->data());
+			$update['foto_profile']=implode($this->upload->data());
 
-		// }
+		}
 		$this->MSudi->UpdateData('tbl_user', 'id_user', $id_user, $update);
 		redirect(site_url('Welcome/DataUser'));
 	}
@@ -260,104 +260,104 @@ class Welcome extends CI_Controller
 
 
 	// Data Produk
-	public function DataPromo()
+	public function DataProduk()
 	{
-		$data['nama'] = $this->session->userdata('nama');
-
-		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$data['username'] = $this->session->userdata('username');
+		$data['foto'] = $this->session->userdata('foto');
 
 		if ($this->uri->segment(4) == 'view') {
-			$id_promo = $this->uri->segment(3);
-			$tampil = $this->MSudi->GetDataWhere('tbl_promo', 'id_promo', $id_promo)->row();
-			$data['detail']['id_promo'] = $tampil->id_promo;
-			$data['detail']['kode_promo'] = $tampil->kode_promo;
-			$data['detail']['nama_promo'] = $tampil->nama_promo;
-			$data['detail']['desc_promo'] = $tampil->desc_promo;
-			$data['detail']['promo_value'] = $tampil->promo_value;
-			$data['detail']['tipe_promo'] = $tampil->tipe_promo;
-			$data['detail']['foto_promo'] = $tampil->foto_promo;
-			$data['detail']['is_active'] = $tampil->is_active;
-			$data['content'] = 'VFormUpdatePromo';
+			$kd_produk = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_produk', 'kd_produk', $kd_produk)->row();
+			$data['kd_jenis'] = $this->MSudi->GetData('tbl_jenis_produk');
+			$data['jenis_produk'] = $this->MSudi->GetData('tbl_jenis_produk');
+			$data['detail']['kd_produk'] = $tampil->kd_produk;
+			$data['detail']['kd_jenis_produk'] = $tampil->kd_jenis_produk;
+			$data['detail']['nama_produk'] = $tampil->nama_produk;
+			$data['detail']['foto'] = $tampil->foto;
+			$data['detail']['keterangan'] = $tampil->keterangan;
+			$data['content'] = 'VFormUpdateProduk';
 		} else {
-			$data['DataPromo'] = $this->MSudi->GetData('tbl_promo');
-			$data['content'] = 'VPromo';
+			$join = "tbl_jenis_produk.kd_jenis = tbl_produk.kd_jenis_produk";
+			$data['DataProduk'] = $this->MSudi->GetDataJoin('tbl_produk', 'tbl_jenis_produk', $join)->result();
+			$data['content'] = 'VProduk';
 		}
 
 
 		$this->load->view('welcome_message', $data);
 	}
-	public function VFormAddPromo()
+	public function VFormAddProduk()
 	{
-		$data['nama'] = $this->session->userdata('nama');
-		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$data['username'] = $this->session->userdata('username');
+		$data['foto'] = $this->session->userdata('foto');
 
-		$data['content'] = 'VFormAddPromo';
-	
+		$data['content'] = 'VFormAddProduk';
+		$data['jenis_produk'] = $this->MSudi->GetData('tbl_jenis_produk');
+		$data['kd_jenis'] = $this->MSudi->GetData('tbl_jenis_produk');
 
 		// $data['tahun_ajaran']=$this->MSudi->GetData('tbl_tahun_ajaran');
 		$this->load->view('welcome_message', $data);
 	}
-	public function AddDataPromo()
+	public function AddDataProduk()
 	{
-		$data['nama'] = $this->session->userdata('nama');
-		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$data['username'] = $this->session->userdata('username');
+		$data['foto'] = $this->session->userdata('foto');
 
-		$add['kode_promo'] = $this->input->post('kode_promo');
-		$add['nama_promo'] = $this->input->post('nama_promo');
-		$add['desc_promo'] = $this->input->post('desc_promo');
-		$add['promo_value'] = $this->input->post('promo_value');
-		$add['tipe_promo'] = $this->input->post('tipe_promo');
+		$add['kd_produk'] = $this->input->post('kd_produk');
+		$add['kd_jenis_produk'] = $this->input->post('kd_jenis_produk');
+
+		$add['nama_produk'] = $this->input->post('nama_produk');
+		$add['foto'] = $this->input->post('foto');
+		$add['keterangan'] = $this->input->post('keterangan');
 
 
-		// $config['upload_path'] = './upload/Promo';
-		// $config['allowed_types'] = 'gif|jpg|png|JPG';
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile')) {
-		// 	$error = array('error' => $this->upload->display_errors());
-		// 	redirect(site_url('Welcome/VFormAddPromo'));
-		// } else {
-		// 	$data = array('upload_data' => $this->upload->data());
-		// 	$add['foto_promo'] = implode($this->upload->data());
-		// }
-		$add['is_active'] = $this->input->post('is_active');
-		$this->MSudi->AddData('tbl_promo', $add);
-		redirect(site_url('Welcome/DataPromo'));
+		$config['upload_path'] = '././upload/produk';
+		$config['allowed_types'] = 'gif|jpg|png|JPG';
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload('userfile')) {
+			$error = array('error' => $this->upload->display_errors());
+			redirect(site_url('Welcome/VFormAddProduk'));
+		} else {
+			$data = array('upload_data' => $this->upload->data());
+			$add['foto'] = implode($this->upload->data());
+		}
+		$this->MSudi->AddData('tbl_produk', $add);
+		redirect(site_url('Welcome/DataProduk'));
 	}
-	public function UpdateDataPromo()
+	public function UpdateDataProduk()
 	{
-		$data['nama'] = $this->session->userdata('nama');
-		$data['foto_profile'] = $this->session->userdata('foto_profile');
-		
-		$id_promo = $this->input->post('id_promo');
-		$update['kode_promo'] = $this->input->post('kode_promo');
-		$update['nama_promo'] = $this->input->post('nama_promo');
-		$update['desc_promo'] = $this->input->post('desc_promo');
-		$update['promo_value']= $this->input->post('promo_value');
-		$update['tipe_promo']= $this->input->post('tipe_promo');
+		$data['username'] = $this->session->userdata('username');
+		$data['foto'] = $this->session->userdata('foto');
 
-		// $config['upload_path'] = './upload/Promo';
-		// $config['allowed_types'] = 'gif|jpg|png';
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile')) {
-		// 	$error = array('error' => $this->upload->display_errors());
-		// 	redirect(site_url('Welcome/VFormUpdatePromo'));
+		$kd_produk = $this->input->post('kd_produk');
+		$update['kd_jenis_produk'] = $this->input->post('kd_jenis_produk');
+		$update['nama_produk'] = $this->input->post('nama_produk');
+		$update['keterangan'] = $this->input->post('keterangan');
+		//$update['foto_user']= $this->input->post('foto_user');
+		// $update['st_user']= $this->input->post('st_user');
 
-		// } else {
-		// 	$data = array('upload_data' => $this->upload->data());
-		// 	$update['foto_promo'] = implode($this->upload->data());
-		// }
+		$config['upload_path'] = '././upload/produk';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$this->load->library('upload', $config);
+		if (!$this->upload->do_upload('userfile')) {
+			$error = array('error' => $this->upload->display_errors());
+			//redirect(site_url('Welcome/VFormUpdateUser'));
 
-		$this->MSudi->UpdateData('tbl_promo', 'id_promo', $id_promo, $update);
-		redirect(site_url('Welcome/DataPromo'));
+		} else {
+			$data = array('upload_data' => $this->upload->data());
+			$update['foto'] = implode($this->upload->data());
+		}
+
+		$this->MSudi->UpdateData('tbl_produk', 'kd_produk', $kd_produk, $update);
+		redirect(site_url('Welcome/DataProduk'));
 	}
-	public function DeleteDataPromo()
+	public function DeleteDataProduk()
 	{
-		$data['nama'] = $this->session->userdata('nama');
-		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$data['username'] = $this->session->userdata('username');
+		$data['foto'] = $this->session->userdata('foto');
 
-		$id_promo = $this->uri->segment('3');
-		$this->MSudi->DeleteData('tbl_promo', 'id_promo', $id_promo);
-		redirect(site_url('Welcome/DataPromo'));
+		$kd_produk = $this->uri->segment('3');
+		$this->MSudi->DeleteData('tbl_produk', 'kd_produk', $kd_produk);
+		redirect(site_url('Welcome/DataProduk'));
 	}
 
 	public function DataSlide()
