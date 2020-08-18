@@ -7,6 +7,12 @@ class MSudi extends CI_Model
     {
         $this->db->insert($tabel,$data);
     }
+    function AddData1($tabel1,$tabel2,$data1=array(),$data2=array())
+    {
+        $this->db->insert($tabel1,$data1);
+        $this->db->insert($tabel2,$data2);
+    }
+
 
     function UpdateData($tabel,$fieldid,$fieldvalue,$data=array())
     {
@@ -20,6 +26,12 @@ class MSudi extends CI_Model
 
     function GetData($tabel)
     {
+        $query= $this->db->get($tabel);
+        return $query->result();
+    }
+    function GetData1($tabel, $field, $value)
+    {
+        $this->db->order_by($field, $value);
         $query= $this->db->get($tabel);
         return $query->result();
     }
