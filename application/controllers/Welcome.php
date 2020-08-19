@@ -132,7 +132,7 @@ class Welcome extends CI_Controller
 		} else {
 			// $join="tbl_staff.kd_staff = tbl_users.kd_staff AND tbl_pegawai.kd_pegawai = tbl_staff.kd_pegawai";
 			// $data['DataUser']=$this->MSudi->GetData2Join('tbl_users','tbl_staff','tbl_pegawai', $join)->result();
-			$data['DataUser'] = $this->MSudi->GetData1('tbl_user','id_user','asc');
+			$data['DataUser'] = $this->MSudi->GetDataWhere1('tbl_user', 'is_active', 1, 'id_user','asc')->result();
 			$data['content'] = 'VUser';
 		}
 
@@ -178,19 +178,22 @@ class Welcome extends CI_Controller
 		$add['is_active'] = $this->input->post('is_active');
 		$add['username'] = $this->input->post('email_user');
 		
-		// $add['foto_user']= $this->input->post('foto_user');
-		// $add['st_user']= $this->input->post('st_user');  
-
-		// $config['upload_path'] = './upload/user_profile';
-		// $config['allowed_types'] = 'gif|jpg|png';
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile')) {
-		// 	$error = array('error' => $this->upload->display_errors());
-		// 	redirect(site_url('Welcome/VFormAddUser'));
-		// } else {
-		// 	$data = array('upload_data' => $this->upload->data());
-		// 	$add['foto_profile'] = implode($this->upload->data());
-		// }
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_profile'] = isset($imagePath) ? strval($imagePath) : '#';
 		$this->MSudi->AddData('tbl_user', $add);
 		redirect(site_url('Welcome/DataUser'));
 	}
@@ -215,34 +218,27 @@ class Welcome extends CI_Controller
 		$update['id_number'] = NULL;
 		$update['kode_referral'] = NULL;
 		$update['points'] = NULL;
-		$update['created_by'] = $this->input->post('created_by');
-		$update['created_date'] = $this->input->post('created_date');
 		$update['updated_by'] =$data['nama'] ;
 		$update['updated_date'] = date("Y-m-d H:i:s");
-		$update['deleted_by'] = NULL;
-		$update['deleted_date'] = NULL;
-		$update['is_active'] = $this->input->post('is_active');
+		
 		$update['username'] = $this->input->post('email_user');
 		
-		// $add['foto_user']= $this->input->post('foto_user');
-		// $add['st_user']= $this->input->post('st_user');  
-
-		// $config['upload_path']='./upload/user_profile';
-		// $config['allowed_types']='gif|jpg|png|jpeg';
-
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile'))
-		// {
-		// 	$error=array('error'=>$this->upload->display_errors());
-		// 	/*redirect(site_url('Welcome/VFormUpdateUser'));*/
-
-		// }
-		// else
-		// {
-		// 	$data=array('upload_data'=>$this->upload->data());
-		// 	$update['foto_profile']=implode($this->upload->data());
-
-		// }
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_profile'] = isset($imagePath) ? strval($imagePath) : '#';
 		$this->MSudi->UpdateData('tbl_user', 'id_user', $id_user, $update);
 		redirect(site_url('Welcome/DataUser'));
 	}
@@ -254,7 +250,11 @@ class Welcome extends CI_Controller
 		$data['nama'] = $this->session->userdata('nama');
 		$data['foto_profile'] = $this->session->userdata('foto_profile');
 		$id_user = $this->uri->segment('3');
-		$this->MSudi->DeleteData('tbl_user', 'id_user', $id_user);
+		$update['is_active'] = 0;
+		$update['deleted_by'] =$data['nama'] ;
+		$update['deleted_date'] = date("Y-m-d H:i:s"); 
+		
+		$this->MSudi->UpdateData('tbl_user', 'id_user', $id_user, $update);
 		redirect(site_url('Welcome/DataUser'));
 	}
 
@@ -279,7 +279,7 @@ class Welcome extends CI_Controller
 			$data['detail']['is_active'] = $tampil->is_active;
 			$data['content'] = 'VFormUpdatePromo';
 		} else {
-			$data['DataPromo'] = $this->MSudi->GetData('tbl_promo');
+			$data['DataPromo'] = $this->MSudi->GetDataWhere1('tbl_promo', 'is_active', 1, 'id_promo','asc')->result();
 			$data['content'] = 'VPromo';
 		}
 
@@ -309,16 +309,22 @@ class Welcome extends CI_Controller
 		$add['tipe_promo'] = $this->input->post('tipe_promo');
 
 
-		// $config['upload_path'] = './upload/Promo';
-		// $config['allowed_types'] = 'gif|jpg|png|JPG';
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile')) {
-		// 	$error = array('error' => $this->upload->display_errors());
-		// 	redirect(site_url('Welcome/VFormAddPromo'));
-		// } else {
-		// 	$data = array('upload_data' => $this->upload->data());
-		// 	$add['foto_promo'] = implode($this->upload->data());
-		// }
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_promo'] = isset($imagePath) ? strval($imagePath) : '#';
 		$add['is_active'] = $this->input->post('is_active');
 		$this->MSudi->AddData('tbl_promo', $add);
 		redirect(site_url('Welcome/DataPromo'));
@@ -335,17 +341,22 @@ class Welcome extends CI_Controller
 		$update['promo_value']= $this->input->post('promo_value');
 		$update['tipe_promo']= $this->input->post('tipe_promo');
 
-		// $config['upload_path'] = './upload/Promo';
-		// $config['allowed_types'] = 'gif|jpg|png';
-		// $this->load->library('upload', $config);
-		// if (!$this->upload->do_upload('userfile')) {
-		// 	$error = array('error' => $this->upload->display_errors());
-		// 	redirect(site_url('Welcome/VFormUpdatePromo'));
-
-		// } else {
-		// 	$data = array('upload_data' => $this->upload->data());
-		// 	$update['foto_promo'] = implode($this->upload->data());
-		// }
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_promo'] = isset($imagePath) ? strval($imagePath) : '#';
 
 		$this->MSudi->UpdateData('tbl_promo', 'id_promo', $id_promo, $update);
 		redirect(site_url('Welcome/DataPromo'));
@@ -356,7 +367,8 @@ class Welcome extends CI_Controller
 		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
 		$id_promo = $this->uri->segment('3');
-		$this->MSudi->DeleteData('tbl_promo', 'id_promo', $id_promo);
+		$update['is_active'] = 0; 
+		$this->MSudi->UpdateData('tbl_promo', 'id_promo', $id_promo, $update);
 		redirect(site_url('Welcome/DataPromo'));
 	}
 
@@ -695,228 +707,430 @@ class Welcome extends CI_Controller
 	
 
 
-	public function DataPrincipal()
+	public function DataMerchant()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
 		if ($this->uri->segment(4) == 'view') {
-			$kd_principal = $this->uri->segment(3);
-			$tampil = $this->MSudi->GetDataWhere('tbl_principal', 'kd_principal', $kd_principal)->row();
-			$data['detail']['kd_principal'] = $tampil->kd_principal;
-			$data['detail']['foto'] = $tampil->foto;
-			$data['content'] = 'VFormUpdatePrincipal';
+			$id_merchant = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_merchant', 'id_merchant', $id_merchant)->row();
+			$data['detail']['id_merchant'] = $tampil->id_merchant;
+			$data['detail']['nama_merchant'] = $tampil->nama_merchant;
+			$data['detail']['alamat_merchant'] = $tampil->alamat_merchant;
+			$data['detail']['tlp_merchant'] = $tampil->tlp_merchant;
+			$data['detail']['email_merchant'] = $tampil->email_merchant;
+			$data['detail']['desc_merchant'] = $tampil->desc_merchant;
+			$data['detail']['foto_merchant'] = $tampil->foto_merchant;
+			$data['detail']['created_by'] = $tampil->created_by;
+			$data['detail']['created_date'] = $tampil->created_date;
+			$data['detail']['updated_by'] = $tampil->updated_by;
+			$data['detail']['updated_date'] = $tampil->updated_date;
+			$data['detail']['deleted_by'] = $tampil->deleted_by;
+			$data['detail']['deleted_date'] = $tampil->deleted_date;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateMerchant';
 		} else {
-			$data['DataPrincipal'] = $this->MSudi->GetData('tbl_principal');
-			$data['content'] = 'VPrincipal';
+			$data['DataMerchant'] = $this->MSudi->GetDataWhere1('tbl_merchant', 'is_active', 1, 'id_merchant','asc')->result();
+			$data['content'] = 'VMerchant';
 		}
 
 
 		$this->load->view('welcome_message', $data);
 	}
-	public function VFormAddPrincipal()
+	public function VFormAddMerchant()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
-		$data['content'] = 'VFormAddPrincipal';
+		$data['content'] = 'VFormAddMerchant';
 		/*$data['kelas']=$this->MSudi->GetData('tbl_kelas');*/
 		// $data['tahun_ajaran']=$this->MSudi->GetData('tbl_tahun_ajaran');
 		$this->load->view('welcome_message', $data);
 	}
-	public function AddDataPrincipal()
+	public function AddDataMerchant()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
-		$add['kd_principal'] = $this->input->post('kd_principal');
-		$add['foto'] = $this->input->post('foto');
+		$add['nama_merchant'] = $this->input->post('nama_merchant');
+		$add['alamat_merchant'] = $this->input->post('alamat_merchant');
+		$add['tlp_merchant'] = $this->input->post('tlp_merchant');
+		$add['email_merchant'] = $this->input->post('email_merchant');
+		$add['desc_merchant'] = $this->input->post('desc_merchant');
+		$add['created_by'] = $data['nama'];
+		$add['created_date'] = date("Y-m-d H:i:s"); 
+		$add['updated_by'] = null;
+		$add['updated_date'] = null;
+		$add['deleted_by'] = null;
+		$add['deleted_date'] = null;
+		$add['is_active'] = 1;
 
-		$config['upload_path'] = '././upload/principal';
-		$config['allowed_types'] = 'gif|jpg|png|JPG';
-		$this->load->library('upload', $config);
-		if (!$this->upload->do_upload('userfile')) {
-			$error = array('error' => $this->upload->display_errors());
-			redirect(site_url('Welcome/VFormAddPrincipal'));
-		} else {
-			$data = array('upload_data' => $this->upload->data());
-			$add['foto'] = implode($this->upload->data());
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
 		}
-		$this->MSudi->AddData('tbl_principal', $add);
-		redirect(site_url('Welcome/DataPrincipal'));
+		$add['foto_merchant'] = isset($imagePath) ? strval($imagePath) : '#';
+		$this->MSudi->AddData('tbl_merchant', $add);
+		redirect(site_url('Welcome/DataMerchant'));
 	}
-	public function UpdateDataPrincipal()
+	public function UpdateDataMerchant()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
 
-		$kd_principal = $this->input->post('kd_principal');
-		$update['foto'] = $this->input->post('foto');
+		$id_merchant = $this->input->post('id_merchant');
+		$update['nama_merchant'] = $this->input->post('nama_merchant');
+		$update['alamat_merchant'] = $this->input->post('alamat_merchant');
+		$update['tlp_merchant'] = $this->input->post('tlp_merchant');
+		$update['email_merchant'] = $this->input->post('email_merchant');
+		$update['desc_merchant'] = $this->input->post('desc_merchant'); 
+		$update['updated_by'] = $data['nama'];
+		$update['updated_date'] =  date("Y-m-d H:i:s");
+		$update['is_active'] = 1;
 
-		$config['upload_path'] = '././upload/principal';
-		$config['allowed_types'] = 'gif|jpg|png|JPG';
-		$this->load->library('upload', $config);
-		if (!$this->upload->do_upload('userfile')) {
-			$error = array('error' => $this->upload->display_errors());
-			//redirect(site_url('Welcome/VFormUpdateUser'));
-
-		} else {
-			$data = array('upload_data' => $this->upload->data());
-			$update['foto'] = implode($this->upload->data());
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
 		}
+		$update['foto_merchant'] = isset($imagePath) ? strval($imagePath) : '#';
 
-		$this->MSudi->UpdateData('tbl_principal', 'kd_principal', $kd_principal, $update);
-		redirect(site_url('Welcome/DataPrincipal'));
+
+		$this->MSudi->UpdateData('tbl_merchant', 'id_merchant', $id_merchant, $update);
+		redirect(site_url('Welcome/DataMerchant'));
 	}
-	public function DeleteDataPrincipal()
+	public function DeleteDataMerchant()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
-		$kd_principal = $this->uri->segment('3');
-		$this->MSudi->DeleteData('tbl_principal', 'kd_principal', $kd_principal);
-		redirect(site_url('Welcome/DataPrincipal'));
+		$id_merchant = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		$update['deleted_by'] =$data['nama'] ;
+		$update['deleted_date'] = date("Y-m-d H:i:s"); 
+		
+		$this->MSudi->UpdateData('tbl_merchant', 'id_merchant', $id_merchant, $update);
+		redirect(site_url('Welcome/DataMerchant'));
 	}
 
 
 
 
-	public function DataJenisProduk()
+	public function DataHotel()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
 
 		if ($this->uri->segment(4) == 'view') {
-			$kd_jenis = $this->uri->segment(3);
-			$tampil = $this->MSudi->GetDataWhere('tbl_jenis_produk', 'kd_jenis', $kd_jenis)->row();
-			$data['kd_kategori'] = $this->MSudi->GetData('tbl_kategori');
-			$data['nama_kategori'] = $this->MSudi->GetData('tbl_kategori');
-			$data['detail']['kd_jenis'] = $tampil->kd_jenis;
-			$data['detail']['jenis_produk'] = $tampil->jenis_produk;
-
-			$data['content'] = 'VFormUpdateJenisProduk';
+			$id_hotel = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_hotel', 'id_hotel', $id_hotel)->row();
+			$data['id_merchant'] = $this->MSudi->GetData('tbl_merchant');
+			$data['nama_merchant'] = $this->MSudi->GetData('tbl_merchant');
+			$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+			$data['nama_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+			$data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
+			$data['detail']['id_hotel'] = $tampil->id_hotel;
+			$data['detail']['id_merchant'] = $tampil->id_merchant;
+			$data['detail']['nama_hotel'] = $tampil->nama_hotel;
+			$data['detail']['alamat_hotel'] = $tampil->alamat_hotel;
+			$data['detail']['tlp_hotel'] = $tampil->tlp_hotel;
+			$data['detail']['email_hotel'] = $tampil->email_hotel;
+			$data['detail']['id_fasilitas'] = $tampil->id_fasilitas;
+			$data['detail']['rating'] = $tampil->rating;
+			$data['detail']['keterangan_hotels'] = $tampil->keterangan_hotels;
+			$data['detail']['foto_hotel'] = $tampil->foto_hotel;
+			$data['detail']['created_by'] = $tampil->created_by;
+			$data['detail']['created_date'] = $tampil->created_date;
+			$data['detail']['updated_by'] = $tampil->updated_by;
+			$data['detail']['updated_date'] = $tampil->updated_date;
+			$data['detail']['deleted_by'] = $tampil->deleted_by;
+			$data['detail']['deleted_date'] = $tampil->deleted_date;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateHotel';
 		} else {
-			$join = "tbl_kategori.kd_kategori = tbl_jenis_produk.kd_jenis  ";
-			$data['DataJenisProduk'] = $this->MSudi->GetDataJoin('tbl_jenis_produk', 'tbl_kategori', $join)->result();
-			$data['content'] = 'VJenisProduk';
+			$data['DataHotel'] = $this->MSudi->GetDataWhere1('tbl_hotel', 'is_active', 1, 'id_hotel','asc')->result();
+			$data['content'] = 'VHotel';
+			
 		}
 
 
 		$this->load->view('welcome_message', $data);
 	}
-	public function VFormAddJenisProduk()
+	public function VFormAddHotel()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-		$data['content'] = 'VFormAddJenisProduk';
-		$data['kd_kategori'] = $this->MSudi->GetData('tbl_kategori');
-		$data['nama_kategori'] = $this->MSudi->GetData('tbl_kategori');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$data['content'] = 'VFormAddHotel';
+		$idCheck = !empty($_GET['id_merchant']);
+		// echo $npm;
+		if($idCheck == true){
+			$id_merchant = $_GET['id_merchant'];
+			$data['nama_merchant']=$this->MSudi->GetData('tbl_merchant');
+			$tampil=$this->MSudi->GetDataWhere('tbl_merchant','id_merchant',$id_merchant)->row();
+			
+			
+			$data['detail']['id_merchant']= $tampil->id_merchant;
+			$data['detail']['nama_merchant']= $tampil->nama_merchant;
+	
+			// echo $data['detail']['nama_mahasiswa'];
+		}else{
+
+		
+		}
+		$data['DataMerchant'] = $this->MSudi->GetDataWhere('tbl_merchant', 'is_active', 1)->result();
+		$data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
+
+		$data['id_merchant'] = $this->MSudi->GetData('tbl_merchant');
+		$data['nama_merchant'] = $this->MSudi->GetData('tbl_merchant');
+		$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+		$data['nama_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+		
+		$this->load->view('welcome_message', $data);
+	}
+	public function AddDataHotel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$add['id_merchant'] = $this->input->post('id_merchant');
+		$add['nama_hotel'] = $this->input->post('nama_hotel');
+		$add['alamat_hotel'] = $this->input->post('alamat_hotel');
+		$add['tlp_hotel'] = $this->input->post('tlp_hotel');
+		$add['email_hotel'] = $this->input->post('email_hotel');
+		$add['id_fasilitas'] = $this->input->post('id_fasilitas');
+		$add['rating'] = null;
+		$add['keterangan_hotels'] = $this->input->post('keterangan_hotels');
+		$add['created_by'] = $data['nama'];
+		$add['created_date'] = date("Y-m-d H:i:s");
+		$add['updated_by'] = null;
+		$add['updated_date'] = null;
+		$add['deleted_by'] = null;
+		$add['deleted_date'] = null;
+		$add['is_active'] = 1;
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_hotel'] = isset($imagePath) ? strval($imagePath) : '#';
+		
+
+
+		$this->MSudi->AddData('tbl_hotel', $add);
+		redirect(site_url('Welcome/DataHotel'));
+	}
+	public function UpdateDataHotel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+
+		$id_hotel = $this->input->post('id_hotel');
+		$update['id_merchant'] = $this->input->post('id_merchant');
+		$update['nama_hotel'] = $this->input->post('nama_hotel');
+		$update['alamat_hotel'] = $this->input->post('alamat_hotel');
+		$update['tlp_hotel'] = $this->input->post('tlp_hotel');
+		$update['email_hotel'] = $this->input->post('email_hotel');
+		$update['id_fasilitas'] = $this->input->post('id_fasilitas');
+		$update['rating'] = null;
+		$update['keterangan_hotels'] = $this->input->post('keterangan_hotels');
+	
+		$update['updated_by'] = $data['nama'];
+		$update['updated_date'] = date("Y-m-d H:i:s");
+		
+
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_hotel'] = isset($imagePath) ? strval($imagePath) : '#';
+		
+
+
+
+		$this->MSudi->UpdateData('tbl_hotel', 'id_hotel', $id_hotel, $update);
+		redirect(site_url('Welcome/DataHotel'));
+	}
+	public function DeleteDataHotel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$id_hotel = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		$update['deleted_by'] =$data['nama'] ;
+		$update['deleted_date'] = date("Y-m-d H:i:s"); 
+		
+		$this->MSudi->UpdateData('tbl_hotel', 'id_hotel', $id_hotel, $update);
+		redirect(site_url('Welcome/DataHotel'));
+	}
+
+
+
+
+	public function DataFasilitas()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		if ($this->uri->segment(4) == 'view') {
+			$id_fasilitas = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_fasilitas', 'id_fasilitas', $id_fasilitas)->row();
+			$data['detail']['id_fasilitas'] = $tampil->id_fasilitas;
+			$data['detail']['nama_fasilitas'] = $tampil->nama_fasilitas;
+			$data['detail']['foto_fasilitas'] = $tampil->foto_fasilitas;
+			$data['detail']['created_by'] = $tampil->created_by;
+			$data['detail']['created_date'] = $tampil->created_date;
+			$data['detail']['updated_by'] = $tampil->updated_by;
+			$data['detail']['updated_date'] = $tampil->updated_date;
+			$data['detail']['deleted_date'] = $tampil->deleted_by;
+			$data['detail']['deleted_date'] = $tampil->deleted_date;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateFasilitas';
+		} else {
+			$data['DataFasilitas'] = $this->MSudi->GetDataWhere1('tbl_fasilitas', 'is_active', 1, 'id_fasilitas','asc')->result();
+			$data['content'] = 'VFasilitas';
+		}
+
+
+		$this->load->view('welcome_message', $data);
+	}
+	public function VFormAddFasilitas()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$data['content'] = 'VFormAddFasilitas';
 		/*$data['kelas']=$this->MSudi->GetData('tbl_kelas');*/
 		// $data['tahun_ajaran']=$this->MSudi->GetData('tbl_tahun_ajaran');
 		$this->load->view('welcome_message', $data);
 	}
-	public function AddDataJenisProduk()
+	public function AddDataFasilitas()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
-
-		$add['kd_jenis'] = $this->input->post('kd_jenis');
-		$add['jenis_produk'] = $this->input->post('jenis_produk');
-		$add['kd_kategori'] = $this->input->post('kd_kategori');
-
-
-		$this->MSudi->AddData('tbl_jenis_produk', $add);
-		redirect(site_url('Welcome/DataJenisProduk'));
-	}
-	public function UpdateDataJenisProduk()
-	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-
-
-		$kd_jenis = $this->input->post('kd_jenis');
-		$update['jenis_produk'] = $this->input->post('jenis_produk');
-		$update['kd_kategori'] = $this->input->post('kd_kategori');
-
-		$this->MSudi->UpdateData('tbl_jenis_produk', 'kd_jenis', $kd_jenis, $update);
-		redirect(site_url('Welcome/DataJenisProduk'));
-	}
-	public function DeleteDataJenisProduk()
-	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-
-		$kd_jenis = $this->uri->segment('3');
-		$this->MSudi->DeleteData('tbl_jenis_produk', 'kd_jenis', $kd_jenis);
-		redirect(site_url('Welcome/DataJenisProduk'));
-	}
-
-
-
-
-	public function DataKategori()
-	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-
-		if ($this->uri->segment(4) == 'view') {
-			$kd_kategori = $this->uri->segment(3);
-			$tampil = $this->MSudi->GetDataWhere('tbl_kategori', 'kd_kategori', $kd_kategori)->row();
-			$data['detail']['kd_kategori'] = $tampil->kd_kategori;
-			$data['detail']['nama_kategori'] = $tampil->nama_kategori;
-			$data['content'] = 'VFormUpdateKategori';
-		} else {
-			$data['DataKategori'] = $this->MSudi->GetData('tbl_kategori');
-			$data['content'] = 'VKategori';
+		$add['nama_fasilitas'] = $this->input->post('nama_fasilitas');
+		$add['created_by'] = $data['nama'];
+		$add['created_date'] = date("Y-m-d H:i:s");
+		$add['updated_by'] = null;
+		$add['updated_date'] = null;
+		$add['deleted_by'] = null;
+		$add['deleted_date'] = null;
+		$add['is_active'] = 1;
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
 		}
-
-
-		$this->load->view('welcome_message', $data);
+		$add['foto_fasilitas'] = isset($imagePath) ? strval($imagePath) : '#';
+		
+		$this->MSudi->AddData('tbl_fasilitas', $add);
+		redirect(site_url('Welcome/DataFasilitas'));
 	}
-	public function VFormAddKategori()
+	public function UpdateDataFasilitas()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
-		$data['content'] = 'VFormAddKategori';
-		/*$data['kelas']=$this->MSudi->GetData('tbl_kelas');*/
-		// $data['tahun_ajaran']=$this->MSudi->GetData('tbl_tahun_ajaran');
-		$this->load->view('welcome_message', $data);
+
+		$id_fasilitas = $this->input->post('id_fasilitas');
+		
+		$update['nama_fasilitas'] = $this->input->post('nama_fasilitas');
+		
+		$update['updated_by'] = $data['nama'];
+		$update['updated_date'] = date("Y-m-d H:i:s");
+		
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_fasilitas'] = isset($imagePath) ? strval($imagePath) : '#';
+		
+		$this->MSudi->UpdateData('tbl_fasilitas', 'id_fasilitas', $id_fasilitas, $update);
+		redirect(site_url('Welcome/DataFasilitas'));
 	}
-	public function AddDataKategori()
+	public function DeleteDataFasilitas()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
-		$add['kd_kategori'] = $this->input->post('kd_kategori');
-		$add['nama_kategori'] = $this->input->post('nama_kategori');
-
-
-		$this->MSudi->AddData('tbl_kategori', $add);
-		redirect(site_url('Welcome/DataKategori'));
-	}
-	public function UpdateDataKategori()
-	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-
-
-		$kd_kategori = $this->input->post('kd_kategori');
-		$update['nama_kategori'] = $this->input->post('nama_kategori');
-
-		$this->MSudi->UpdateData('tbl_kategori', 'kd_kategori', $kd_kategori, $update);
-		redirect(site_url('Welcome/DataKategori'));
-	}
-	public function DeleteDataKategori()
-	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
-
-		$kd_kategori = $this->uri->segment('3');
-		$this->MSudi->DeleteData('tbl_kategori', 'kd_kategori', $kd_kategori);
-		redirect(site_url('Welcome/DataKategori'));
+		$id_fasilitas = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		$update['deleted_by'] = $data['nama'] ;
+		$update['deleted_date'] = date("Y-m-d H:i:s"); 
+		
+		$this->MSudi->UpdateData('tbl_fasilitas', 'id_fasilitas', $id_fasilitas, $update);
+		redirect(site_url('Welcome/DataFasilitas'));
 	}
 
 
@@ -924,8 +1138,9 @@ class Welcome extends CI_Controller
 
 	public function Logout()
 	{
-		$data['username'] = $this->session->userdata('username');
-		$data['foto'] = $this->session->userdata('foto');
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
 		$this->load->library('session');
 		$this->session->unset_userdata('Login');
 		redirect(site_url('Login'));
