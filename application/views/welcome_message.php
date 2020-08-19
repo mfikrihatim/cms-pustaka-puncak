@@ -176,7 +176,22 @@
                   <i class="fa  fa-plus"> <span> DATA CUSTOMER</i></span>
                 </a>
               </li>
-            
+              <li>
+                <a href="<?php echo site_url('Welcome/DataMerchant'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA MERCHANT</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataHotel'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA HOTEL</i></span>
+                </a>
+              </li>
+
+              <li>
+                <a href="<?php echo site_url('Welcome/DataFasilitas'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA FASILITAS</i></span>
+                </a>
+              </li>
 
 
               <li>
