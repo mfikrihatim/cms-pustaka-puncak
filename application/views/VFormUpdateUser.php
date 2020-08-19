@@ -41,9 +41,11 @@
                 </div> -->
   
                 <div class="form-group">
-                <img src="<?php echo base_url('upload/user_profile'). $detail['foto_profile']; ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+                <img src="<?php  echo $detail['foto_profile'];  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+
+                
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="userfile"/>
+                  <input type="file" name="file"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
 

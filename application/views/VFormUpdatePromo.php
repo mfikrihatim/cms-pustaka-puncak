@@ -38,13 +38,15 @@
 					<input type="text" name="tipe_promo" value="<?php echo $detail['tipe_promo']; ?>" class="form-control" placeholder="Deskripsi Promo" required>
 				</div>
 				
-				<!-- <div class="form-group">
-				<label>Foto Sebelumnnya</label><br>
-                <img src="<?php echo base_url('upload/Promo/'). $detail['foto_promo']; ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+				<div class="form-group">
+                <img src="<?php  echo $detail['foto_promo'];  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+
+                
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="userfile"/>
+                  <input type="file" name="file"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
-                </div> -->
+                </div>
+                </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">
 				
 			</div>

@@ -60,7 +60,7 @@
           <td><?php echo $ReadDS->tlp_user; ?></td>
           <td><?php echo $ReadDS->kode_verifikasi; ?></td>
           <td><?php echo $ReadDS->tgl_verifikasi; ?></td>
-          <td ><img width="50px" height="50px" src="<?php echo base_url('upload/user_profile/'). $ReadDS->foto_profile; ?>"></td>
+          <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_profile; ?>"></td>
           <td><?php echo $ReadDS->alamat; ?></td>
           <td><?php echo $ReadDS->tmp_lahir; ?></td>
           <td><?php echo $ReadDS->tgl_lahir; ?></td>

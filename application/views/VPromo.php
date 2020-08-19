@@ -42,8 +42,8 @@
                   <td><?php echo $ReadDS->desc_promo; ?></td>
                   <td><?php echo $ReadDS->promo_value; ?></td>
                   <td><?php echo $ReadDS->tipe_promo; ?></td>
-                  <td><img width="50px" height="50px" src="<?php echo base_url('upload/Promo/') . $ReadDS->foto_promo; ?>"></td>
-                  <td><?php echo $ReadDS->is_active; ?></td>
+                  <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_promo; ?>"></td> 
+                   <td><?php echo $ReadDS->is_active; ?></td>
                   <td>
                     <a href="<?php echo site_url('Welcome/DataPromo/' . $ReadDS->id_promo . '/view') ?>"><i class="fa fa-edit"></i></a>
                     <a href="<?php echo site_url('Welcome/DeleteDataPromo/' . $ReadDS->id_promo) ?>"><i class="fa fa-fw fa-trash"></i></a>
@@ -115,7 +115,12 @@
 					<label>Tipe Promo</label>
 					<input type="text" name="tipe_promo" class="form-control" placeholder="Tipe Promo" required>
 				</div>
-				
+        
+        <div class="form-group">
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" name="file"/>
+                  <!-- <p class="help-block">Example block-level help text here.</p> -->
+                </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">
                 <!-- </div> -->
 			</div>
