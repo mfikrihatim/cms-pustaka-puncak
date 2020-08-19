@@ -124,6 +124,6 @@
 <script>
 	function eventHotel(){
 		var id_merchant = document.getElementById('id_merchant').value;
-		window.location = "http://localhost:8080/cms-pustaka-puncak/index.php/Welcome/VFormAddHotel" + "?id_merchant=" + id_merchant;
+		window.location = "https://pustaka-puncak-web-cms.azurewebsites.net/index.php/Welcome/VFormAddHotel" + "?id_merchant=" + id_merchant;
 	}
 </script>
