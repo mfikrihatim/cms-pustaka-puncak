@@ -859,7 +859,8 @@ class Welcome extends CI_Controller
 			$data['detail']['alamat_hotel'] = $tampil->alamat_hotel;
 			$data['detail']['tlp_hotel'] = $tampil->tlp_hotel;
 			$data['detail']['email_hotel'] = $tampil->email_hotel;
-			$data['detail']['id_fasilitas'] = $tampil->id_fasilitas;
+			$arrayidfasilitas = json_decode($tampil->id_fasilitas, TRUE);
+			$data['detail']['id_fasilitas'] = $arrayidfasilitas;
 			$data['detail']['rating'] = $tampil->rating;
 			$data['detail']['keterangan_hotels'] = $tampil->keterangan_hotels;
 			$data['detail']['foto_hotel'] = $tampil->foto_hotel;
@@ -914,6 +915,9 @@ class Welcome extends CI_Controller
 	}
 	public function AddDataHotel()
 	{
+		$id_fasilitas = $this->input->post("id_fasilitas");
+		if($id_fasilitas == null)
+		$id_fasilitas =  [];
 		$data['nama'] = $this->session->userdata('nama');
 		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
@@ -922,7 +926,8 @@ class Welcome extends CI_Controller
 		$add['alamat_hotel'] = $this->input->post('alamat_hotel');
 		$add['tlp_hotel'] = $this->input->post('tlp_hotel');
 		$add['email_hotel'] = $this->input->post('email_hotel');
-		$add['id_fasilitas'] = $this->input->post('id_fasilitas');
+		
+		$add['id_fasilitas'] = json_encode($id_fasilitas);
 		$add['rating'] = null;
 		$add['keterangan_hotels'] = $this->input->post('keterangan_hotels');
 		$add['created_by'] = $data['nama'];
@@ -960,14 +965,20 @@ class Welcome extends CI_Controller
 		$data['foto_profile'] = $this->session->userdata('foto_profile');
 
 
-
+		$id_fasilitas = $this->input->post("id_fasilitas");
+		if($id_fasilitas == null|| $id_fasilitas == ""){
+			$id_fasilitas = "[]";
+		}else{
+			$id_fasilitas = json_encode($id_fasilitas);
+		}
+		
 		$id_hotel = $this->input->post('id_hotel');
 		$update['id_merchant'] = $this->input->post('id_merchant');
 		$update['nama_hotel'] = $this->input->post('nama_hotel');
 		$update['alamat_hotel'] = $this->input->post('alamat_hotel');
 		$update['tlp_hotel'] = $this->input->post('tlp_hotel');
 		$update['email_hotel'] = $this->input->post('email_hotel');
-		$update['id_fasilitas'] = $this->input->post('id_fasilitas');
+		$update['id_fasilitas'] = $id_fasilitas;
 		$update['rating'] = null;
 		$update['keterangan_hotels'] = $this->input->post('keterangan_hotels');
 	
@@ -1131,6 +1142,202 @@ class Welcome extends CI_Controller
 		
 		$this->MSudi->UpdateData('tbl_fasilitas', 'id_fasilitas', $id_fasilitas, $update);
 		redirect(site_url('Welcome/DataFasilitas'));
+	}
+
+	
+	public function DataKategoriArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		if ($this->uri->segment(4) == 'view') {
+			$id_kategori_artikel = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_kategori_artikel', 'id_kategori_artikel', $id_kategori_artikel)->row();
+			$data['detail']['id_kategori_artikel'] = $tampil->id_kategori_artikel;
+			$data['detail']['nama_kategori_artikel'] = $tampil->nama_kategori_artikel;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateKategoriArtikel';
+		} else {
+			$data['DataKategoriArtikel'] = $this->MSudi->GetDataWhere1('tbl_kategori_artikel', 'is_active', 1, 'id_kategori_artikel','asc')->result();
+			$data['content'] = 'VKategoriArtikel';
+		}
+
+
+		$this->load->view('welcome_message', $data);
+	}
+		public function VFormKategoriAddArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$data['content'] = 'VFormAddKategoriArtikel';
+		/*$data['kelas']=$this->MSudi->GetData('tbl_kelas');*/
+		// $data['tahun_ajaran']=$this->MSudi->GetData('tbl_tahun_ajaran');
+		$this->load->view('welcome_message', $data);
+	}
+	public function AddDataKategoriArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$add['nama_kategori_artikel'] = $this->input->post('nama_kategori_artikel');
+		$add['is_active'] = 1;
+				
+		$this->MSudi->AddData('tbl_kategori_artikel', $add);
+		redirect(site_url('Welcome/DataKategoriArtikel'));
+	}
+	public function UpdateDataKategoriArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		$id_kategori_artikel = $this->input->post('id_kategori_artikel');
+		
+		$update['nama_kategori_artikel'] = $this->input->post('nama_kategori_artikel');
+	
+		
+		$this->MSudi->UpdateData('tbl_kategori_artikel', 'id_kategori_artikel', $id_kategori_artikel, $update);
+		redirect(site_url('Welcome/DataKategoriArtikel'));
+	}
+	public function DeleteDataKategoriArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$id_kategori_artikel = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		
+		$this->MSudi->UpdateData('tbl_kategori_artikel', 'id_kategori_artikel', $id_kategori_artikel, $update);
+		redirect(site_url('Welcome/DataKategoriArtikel'));
+	}
+
+
+
+
+
+	public function DataArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		if ($this->uri->segment(4) == 'view') {
+			$id_artikel = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_artikel', 'id_artikel', $id_artikel)->row();
+			$data['detail']['id_artikel'] = $tampil->id_artikel;
+			$data['detail']['judul_artikel'] = $tampil->judul_artikel;
+			$data['detail']['desc_artikel'] = $tampil->desc_artikel;
+			$data['detail']['id_kategori'] = $tampil->id_kategori;
+			$data['detail']['foto_artikel'] = $tampil->foto_artikel;
+		
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateArtikel';
+		} else {
+			$data['DataArtikel'] = $this->MSudi->GetDataWhere1('tbl_artikel', 'is_active', 1, 'id_artikel','asc')->result();
+			$data['content'] = 'VArtikel';
+		}
+
+
+		$this->load->view('welcome_message', $data);
+	}
+
+	public function VFormAddArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$data['id_kategori_artikel'] = $this->MSudi->GetData('tbl_kategori_artikel');
+
+		$data['content'] = 'VFormAddArtikel';
+		/*$data['kelas']=$this->MSudi->GetData('tbl_kelas');*/
+		// $data['tahun_ajaran']=$this->MSudi->GetData('tbl_tahun_ajaran');
+		$this->load->view('welcome_message', $data);
+	}
+	public function AddDataArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$data['id_kategori_artikel'] = $this->MSudi->GetData('tbl_kategori_artikel');
+	
+		$add['judul_artikel'] = $this->input->post('judul_artikel');
+		$add['desc_artikel'] = $this->input->post('desc_artikel');
+		$add['id_kategori'] = $this->input->post('id_kategori');
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_artikel'] = isset($imagePath) ? strval($imagePath) : '#';
+		
+		$add['created_by'] = $data['nama'];
+		$add['created_date'] = date("Y-m-d H:i:s");
+		$add['updated_by'] = null;
+		$add['updated_date'] = null;
+		$add['deleted_by'] = null;
+		$add['deleted_date'] = null;
+		$add['is_active'] = 1;
+				
+		$this->MSudi->AddData('tbl_artikel', $add);
+		redirect(site_url('Welcome/DataArtikel'));
+	}
+	public function UpdateDataArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		$id_artikel = $this->input->post('id_artikel');
+		
+		$update['judul_artikel'] = $this->input->post('judul_artikel');
+		$update['desc_artikel'] = $this->input->post('desc_artikel');
+		$update['id_kategori'] = $this->input->post('id_kategori');
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_artikel'] = isset($imagePath) ? strval($imagePath) : '#';
+		
+		$update['updated_by'] = $data['nama'];
+		$update['updated_date'] = date("Y-m-d H:i:s");
+	
+	
+		
+		$this->MSudi->UpdateData('tbl_artikel', 'id_artikel', $id_artikel, $update);
+		redirect(site_url('Welcome/DataArtikel'));
+	}
+	public function DeleteDataArtikel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$id_artikel = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		$update['deleted_by'] = $data['nama'] ;
+		$update['deleted_date'] =  date("Y-m-d H:i:s");
+		$this->MSudi->UpdateData('tbl_artikel', 'id_artikel', $id_artikel, $update);
+		redirect(site_url('Welcome/DataArtikel'));
 	}
 
 

@@ -38,19 +38,52 @@
 					<input type="email" name="email_hotel" class="form-control"  value="<?php echo $detail['email_hotel']; ?>" required >
 				</div>
 				<div class="form-group">
+					
 					<label>Pilih Fasilitas</label>
-					<select class="form-control" name="id_fasilitas" required>
-						<option selected disabled>Pilih Fasilitas</option>
-            <?php
-           	$data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
-							foreach($DataFasilitas as $ReadDS){
-						?>
-						<option value="<?php echo $ReadDS->id_fasilitas; ?>"><?php echo $ReadDS->nama_fasilitas; ?></option>
-						<?php
-							}
-						?>
-                  </select>
-				 </div>
+					
+
+				 <?php
+				 $data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
+						 
+				 foreach($DataFasilitas as $ReadDS){
+									$ada = null;
+									foreach($detail['id_fasilitas'] as $ids){
+										if($ids == $ReadDS->id_fasilitas){
+											$ada = $ids;
+										}
+									}
+								 if (isset($ada)){
+									 ?> 
+									 <div class='form-group'>
+									 <div class='checkbox'>
+									 <label>
+									 <input type='checkbox' id="id_fasilitas" name='id_fasilitas[]'  value='<?php echo $ReadDS->id_fasilitas; ?>' checked>
+									 <?php echo $ReadDS->nama_fasilitas; ?>
+									 </label>
+									 </div>
+									 <?php 
+								 }else {
+									 ?>
+									<div class='form-group'>
+									<div class='checkbox'>
+									<label>
+									<input type='checkbox' id="id_fasilitas" name='id_fasilitas[]'  value='<?php echo $ReadDS->id_fasilitas; ?>' >
+									<?php echo $ReadDS->nama_fasilitas; ?>
+									</label>
+									</div>
+									<?php
+								 }								 	
+						  ?>
+										
+
+									<?php
+								  }
+									// $no++;
+									
+									?>
+										</div>
+				</div>
+		
 			
 				<div class="box-body pad">
               		<label>Keterangan Hotel</label>
