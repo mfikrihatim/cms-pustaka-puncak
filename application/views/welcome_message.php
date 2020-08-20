@@ -192,7 +192,16 @@
                   <i class="fa  fa-plus"> <span> DATA FASILITAS</i></span>
                 </a>
               </li>
-
+              <li>
+                <a href="<?php echo site_url('Welcome/DataKategoriArtikel'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA KATEGORI ARTIKEL</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataArtikel'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA ARTIKEL</i></span>
+                </a>
+              </li>
 
               <li>
                 <a href="<?php echo site_url('Welcome/Logout'); ?>">
