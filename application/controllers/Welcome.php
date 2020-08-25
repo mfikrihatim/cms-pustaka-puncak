@@ -1915,6 +1915,132 @@ class Welcome extends CI_Controller
 		$this->MSudi->UpdateData('tbl_experience', 'id_exp', $id_exp, $update);
 		redirect(site_url('Welcome/DataExperience'));
 	}
+
+	public function DataMinimumBooking()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		if ($this->uri->segment(4) == 'view') {
+			$id_minimum_booking = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_minimum_booking', 'id_minimum_booking', $id_minimum_booking)->row();
+			$data['detail']['id_minimum_booking'] = $tampil->id_minimum_booking;
+			$data['detail']['desc_minimum_booking'] = $tampil->desc_minimum_booking;
+			$data['detail']['minimum_booking_ammount'] = $tampil->minimum_booking_ammount;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateMinimumBooking';
+		} else {
+			$data['DataMinimumBooking'] = $this->MSudi->GetDataWhere1('tbl_minimum_booking', 'is_active', 1, 'id_minimum_booking','asc')->result();
+			$data['content'] = 'VMinimumBooking';
+		}
+
+
+		$this->load->view('welcome_message', $data);
+	}
+	
+	public function AddDataMinimumBooking()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$add['desc_minimum_booking'] = $this->input->post('desc_minimum_booking');
+		$add['minimum_booking_ammount'] = $this->input->post('minimum_booking_ammount');
+		$add['is_active'] = 1;
+				
+		$this->MSudi->AddData('tbl_minimum_booking', $add);
+		redirect(site_url('Welcome/DataMinimumBooking'));
+	}
+	public function UpdateDataMinimumBooking()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		$id_minimum_booking = $this->input->post('id_minimum_booking');
+		
+		$update['desc_minimum_booking'] = $this->input->post('desc_minimum_booking');
+		$update['minimum_booking_ammount'] = $this->input->post('minimum_booking_ammount');
+		$update['is_active'] = 1;
+	
+		
+		$this->MSudi->UpdateData('tbl_minimum_booking', 'id_minimum_booking', $id_minimum_booking, $update);
+		redirect(site_url('Welcome/DataMinimumBooking'));
+	}
+	public function DeleteDataMinimumBooking()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$id_minimum_booking = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		
+		$this->MSudi->UpdateData('tbl_minimum_booking', 'id_minimum_booking', $id_minimum_booking, $update);
+		redirect(site_url('Welcome/DataMinimumBooking'));
+	}
+
+
+	public function DataPaymentMethod()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		if ($this->uri->segment(4) == 'view') {
+			$id_payment_method = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_payment_method', 'id_payment_method', $id_payment_method)->row();
+			$data['detail']['id_payment_method'] = $tampil->id_payment_method;
+			$data['detail']['nama_payment_method'] = $tampil->nama_payment_method;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdatePaymentMethod';
+		} else {
+			$data['DataPaymentMethod'] = $this->MSudi->GetDataWhere1('tbl_payment_method', 'is_active', 1, 'id_payment_method','asc')->result();
+			$data['content'] = 'VPaymentMethod';
+		}
+
+
+		$this->load->view('welcome_message', $data);
+	}
+	
+	public function AddDataPaymentMethod()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$add['nama_payment_method'] = $this->input->post('nama_payment_method');
+		$add['is_active'] = 1;
+				
+		$this->MSudi->AddData('tbl_payment_method', $add);
+		redirect(site_url('Welcome/DataPaymentMethod'));
+	}
+	public function UpdateDataPaymentMethod()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		$id_payment_method = $this->input->post('id_payment_method');
+		
+		$update['nama_payment_method'] = $this->input->post('nama_payment_method');
+		$update['is_active'] = 1;
+	
+		
+		$this->MSudi->UpdateData('tbl_payment_method', 'id_payment_method', $id_payment_method, $update);
+		redirect(site_url('Welcome/DataPaymentMethod'));
+	}
+	public function DeleteDataPaymentMethod()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$id_payment_method = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		
+		$this->MSudi->UpdateData('tbl_payment_method', 'id_payment_method', $id_payment_method, $update);
+		redirect(site_url('Welcome/DataPaymentMethod'));
+	}
+
+
 	public function Logout()
 	{
 		$data['nama'] = $this->session->userdata('nama');

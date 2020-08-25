@@ -222,6 +222,16 @@
                   <i class="fa  fa-plus"> <span> DATA EXPERIENCE</i></span>
                 </a>
               </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataMinimumBooking'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA MINIMUM BOOKING</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataPaymentMethod'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA PAYMENT METHOD</i></span>
+                </a>
+              </li>
 
               <li>
                 <a href="<?php echo site_url('Welcome/Logout'); ?>">
