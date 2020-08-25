@@ -202,6 +202,36 @@
                   <i class="fa  fa-plus"> <span> DATA ARTIKEL</i></span>
                 </a>
               </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataCamp'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA CAMP</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataWisata'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA WISATA</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataTipeExperience'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA TIPE EXPERIENCE</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataExperience'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA EXPERIENCE</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataMinimumBooking'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA MINIMUM BOOKING</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataPaymentMethod'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA PAYMENT METHOD</i></span>
+                </a>
+              </li>
 
               <li>
                 <a href="<?php echo site_url('Welcome/Logout'); ?>">
