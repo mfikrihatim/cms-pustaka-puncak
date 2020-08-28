@@ -44,6 +44,8 @@
             <?php
             if (!empty($DataHotel)) {
               foreach ($DataHotel as $ReadDS) {
+                $arrayfotohotel = json_decode($ReadDS->foto_hotel, TRUE);
+                $fotos = $arrayfotohotel;
             ?>
                 <tr>
                   <td><?php echo $ReadDS->id_hotel; ?></td>
@@ -55,7 +57,17 @@
                   <td><?php echo $ReadDS->id_fasilitas; ?></td>
                   <td><?php echo $ReadDS->rating; ?></td>
                   <td><?php echo $ReadDS->keterangan_hotels; ?></td>
-                  <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_hotel; ?>"></td> 
+                  <td >
+                  <?php 
+				
+				foreach($fotos as $foto){
+				?>
+				
+        <img width="50px" height="50px" src="<?php echo $foto; ?>">
+				<?php 
+				}
+				?> 
+                  </td> 
                   <td><?php echo $ReadDS->created_by; ?></td>
                   <td><?php echo $ReadDS->created_date; ?></td>
                   <td><?php echo $ReadDS->updated_by; ?></td>

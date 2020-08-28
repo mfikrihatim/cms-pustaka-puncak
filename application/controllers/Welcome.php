@@ -863,7 +863,8 @@ class Welcome extends CI_Controller
 			$data['detail']['id_fasilitas'] = $arrayidfasilitas;
 			$data['detail']['rating'] = $tampil->rating;
 			$data['detail']['keterangan_hotels'] = $tampil->keterangan_hotels;
-			$data['detail']['foto_hotel'] = $tampil->foto_hotel;
+			$arrayfotohotel = json_decode($tampil->foto_hotel, TRUE);
+			$data['detail']['foto_hotel'] = $arrayfotohotel;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -898,6 +899,262 @@ class Welcome extends CI_Controller
 		
 		$this->load->view('welcome_message', $data);
 	}
+	function uploadBlobCollectionList($blobName,$realPath,$file_name,$index) {
+    
+		// Location
+		$location =  dirname(__FILE__)."/".$blobName;
+	
+		$accesskey = "JUUFK+nG5Gew1o00iZOM7zKWz9gjG8j11BeuFScbyn++N5vG81qxCQLMQs2oGFfn/1YQOh+j9kt6O07HFmLP2g==";
+		$storageAccount = 'pustakapuncakstorage';
+		// $filetoUpload = realpath('./' . $blobName);
+		$filetoUpload = $_FILES[$file_name]['tmp_name'][$index];
+		$containerName = 'pustaka-puncak';
+		// $blobName = 'image.jpg';
+		$media_type =  $_FILES[$file_name]['type'][$index];
+		// if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+		//     $unique_file = uniqid() . '.jpeg';
+		// }elseif($media_type == 'video/mp4'){
+		//     $unique_file = uniqid() . '.mp4';
+		// }
+	   
+		$destinationURL = "https://$storageAccount.blob.core.windows.net/$containerName/$blobName";
+	
+		$currentDate = gmdate("D, d M Y H:i:s T", time());
+		$handle = fopen($filetoUpload, "r");
+		$fileLen = filesize($filetoUpload);
+	
+		$headerResource = "x-ms-blob-cache-control:max-age=3600\nx-ms-blob-type:BlockBlob\nx-ms-date:$currentDate\nx-ms-version:2015-12-11";
+		$urlResource = "/$storageAccount/$containerName/$blobName";
+	
+		
+	
+	if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+		$arraysign = array();
+		$arraysign[] = 'PUT';               /*HTTP Verb*/  
+		$arraysign[] = '';                  /*Content-Encoding*/  
+		$arraysign[] = '';                  /*Content-Language*/  
+		$arraysign[] = $fileLen;            /*Content-Length (include value when zero)*/  
+		$arraysign[] = '';                  /*Content-MD5*/  
+		$arraysign[] = 'image/png';         /*Content-Type*/  
+		$arraysign[] = '';                  /*Date*/  
+		$arraysign[] = '';                  /*If-Modified-Since */  
+		$arraysign[] = '';                  /*If-Match*/  
+		$arraysign[] = '';                  /*If-None-Match*/  
+		$arraysign[] = '';                  /*If-Unmodified-Since*/  
+		$arraysign[] = '';                  /*Range*/  
+		$arraysign[] = $headerResource;     /*CanonicalizedHeaders*/
+		$arraysign[] = $urlResource;        /*CanonicalizedResource*/
+	
+		$str2sign = implode("\n", $arraysign);
+	
+		$sig = base64_encode(hash_hmac('sha256', urldecode(utf8_encode($str2sign)), base64_decode($accesskey), true));  
+		$authHeader = "SharedKey $storageAccount:$sig";
+	
+		$headers = [
+			'Authorization: ' . $authHeader,
+			'x-ms-blob-cache-control: max-age=3600',
+			'x-ms-blob-type: BlockBlob',
+			'x-ms-date: ' . $currentDate,
+			'x-ms-version: 2015-12-11',
+			'Content-Type: image/png',
+			'Content-Length: ' . $fileLen
+		];
+	
+		$ch = curl_init($destinationURL);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+		curl_setopt($ch, CURLOPT_INFILE, $handle); 
+		curl_setopt($ch, CURLOPT_INFILESIZE, $fileLen); 
+		curl_setopt($ch, CURLOPT_UPLOAD, true); 
+		$result = curl_exec($ch);
+	
+		echo ('Result<br/>');
+		print_r($result);
+	
+		echo ('Error<br/>');
+		print_r(curl_error($ch));
+	
+		curl_close($ch);
+	
+	}elseif($media_type == 'video/mp4'){
+			$arraysign = array();
+			$arraysign[] = 'PUT';               /*HTTP Verb*/  
+			$arraysign[] = '';                  /*Content-Encoding*/  
+			$arraysign[] = '';                  /*Content-Language*/  
+			$arraysign[] = $fileLen;            /*Content-Length (include value when zero)*/  
+			$arraysign[] = '';                  /*Content-MD5*/  
+			$arraysign[] = 'video/mp4';         /*Content-Type*/  
+			$arraysign[] = '';                  /*Date*/  
+			$arraysign[] = '';                  /*If-Modified-Since */  
+			$arraysign[] = '';                  /*If-Match*/  
+			$arraysign[] = '';                  /*If-None-Match*/  
+			$arraysign[] = '';                  /*If-Unmodified-Since*/  
+			$arraysign[] = '';                  /*Range*/  
+			$arraysign[] = $headerResource;     /*CanonicalizedHeaders*/
+			$arraysign[] = $urlResource;        /*CanonicalizedResource*/
+	
+			$str2sign = implode("\n", $arraysign);
+	
+		$sig = base64_encode(hash_hmac('sha256', urldecode(utf8_encode($str2sign)), base64_decode($accesskey), true));  
+		$authHeader = "SharedKey $storageAccount:$sig";
+	
+		$headers = [
+			'Authorization: ' . $authHeader,
+			'x-ms-blob-cache-control: max-age=3600',
+			'x-ms-blob-type: BlockBlob',
+			'x-ms-date: ' . $currentDate,
+			'x-ms-version: 2015-12-11',
+			'Content-Type: video/mp4',
+			'Content-Length: ' . $fileLen
+		];
+	
+		$ch = curl_init($destinationURL);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+		curl_setopt($ch, CURLOPT_INFILE, $handle); 
+		curl_setopt($ch, CURLOPT_INFILESIZE, $fileLen); 
+		curl_setopt($ch, CURLOPT_UPLOAD, true); 
+		$result = curl_exec($ch);
+	
+		echo ('Result<br/>');
+		print_r($result);
+	
+		echo ('Error<br/>');
+		print_r(curl_error($ch));
+	
+		curl_close($ch);
+		}
+		
+		return $destinationURL;
+
+		// $accesskey = "JUUFK+nG5Gew1o00iZOM7zKWz9gjG8j11BeuFScbyn++N5vG81qxCQLMQs2oGFfn/1YQOh+j9kt6O07HFmLP2g==";
+		// $storageAccount = 'pustakapuncakstorage';
+		// $filetoUpload = $_FILES[$file_name]['tmp_name'][$index];
+		// // $filetoUpload = $location;
+		// $containerName = 'pustaka-puncak';
+		// $media_type =  $_FILES[$file_name]['type'][$index];
+		// $destinationURL = "https://$storageAccount.blob.core.windows.net/$containerName/$blobName";
+	
+		// $currentDate = gmdate("D, d M Y H:i:s T", time());
+		// $handle = fopen($filetoUpload, "r");
+		// $fileLen = filesize($filetoUpload);
+	
+		// $headerResource = "x-ms-blob-cache-control:max-age=3600\nx-ms-blob-type:BlockBlob\nx-ms-date:$currentDate\nx-ms-version:2015-12-11";
+		// $urlResource = "/$storageAccount/$containerName/$blobName";
+	
+		// if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+		// 	$arraysign = array();
+		// 	$arraysign[] = 'PUT';               /*HTTP Verb*/  
+		// 	$arraysign[] = '';                  /*Content-Encoding*/  
+		// 	$arraysign[] = '';                  /*Content-Language*/  
+		// 	$arraysign[] = $fileLen;            /*Content-Length (include value when zero)*/  
+		// 	$arraysign[] = '';                  /*Content-MD5*/  
+		// 	$arraysign[] = 'image/png';         /*Content-Type*/  
+		// 	$arraysign[] = '';                  /*Date*/  
+		// 	$arraysign[] = '';                  /*If-Modified-Since */  
+		// 	$arraysign[] = '';                  /*If-Match*/  
+		// 	$arraysign[] = '';                  /*If-None-Match*/  
+		// 	$arraysign[] = '';                  /*If-Unmodified-Since*/  
+		// 	$arraysign[] = '';                  /*Range*/  
+		// 	$arraysign[] = $headerResource;     /*CanonicalizedHeaders*/
+		// 	$arraysign[] = $urlResource;        /*CanonicalizedResource*/
+		
+		// 	$str2sign = implode("\n", $arraysign);
+		
+		// 	$sig = base64_encode(hash_hmac('sha256', urldecode(utf8_encode($str2sign)), base64_decode($accesskey), true));  
+		// 	$authHeader = "SharedKey $storageAccount:$sig";
+		
+		// 	$headers = [
+		// 		'Authorization: ' . $authHeader,
+		// 		'x-ms-blob-cache-control: max-age=3600',
+		// 		'x-ms-blob-type: BlockBlob',
+		// 		'x-ms-date: ' . $currentDate,
+		// 		'x-ms-version: 2015-12-11',
+		// 		'Content-Type: image/png',
+		// 		'Content-Length: ' . $fileLen
+		// 	];
+		
+		// 	$ch = curl_init($destinationURL);
+		// 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		// 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		// 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		// 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+		// 	curl_setopt($ch, CURLOPT_INFILE, $handle); 
+		// 	curl_setopt($ch, CURLOPT_INFILESIZE, $fileLen); 
+		// 	curl_setopt($ch, CURLOPT_UPLOAD, true); 
+		// 	$result = curl_exec($ch);
+		
+		// 	echo ('Result<br/>');
+		// 	print_r($result);
+		
+		// 	echo ('Error<br/>');
+		// 	print_r(curl_error($ch));
+		
+		// 	curl_close($ch);
+		
+		// }elseif($media_type == 'video/mp4'){
+		// 		$arraysign = array();
+		// 		$arraysign[] = 'PUT';               /*HTTP Verb*/  
+		// 		$arraysign[] = '';                  /*Content-Encoding*/  
+		// 		$arraysign[] = '';                  /*Content-Language*/  
+		// 		$arraysign[] = $fileLen;            /*Content-Length (include value when zero)*/  
+		// 		$arraysign[] = '';                  /*Content-MD5*/  
+		// 		$arraysign[] = 'video/mp4';         /*Content-Type*/  
+		// 		$arraysign[] = '';                  /*Date*/  
+		// 		$arraysign[] = '';                  /*If-Modified-Since */  
+		// 		$arraysign[] = '';                  /*If-Match*/  
+		// 		$arraysign[] = '';                  /*If-None-Match*/  
+		// 		$arraysign[] = '';                  /*If-Unmodified-Since*/  
+		// 		$arraysign[] = '';                  /*Range*/  
+		// 		$arraysign[] = $headerResource;     /*CanonicalizedHeaders*/
+		// 		$arraysign[] = $urlResource;        /*CanonicalizedResource*/
+		
+		// 		$str2sign = implode("\n", $arraysign);
+		
+		// 	$sig = base64_encode(hash_hmac('sha256', urldecode(utf8_encode($str2sign)), base64_decode($accesskey), true));  
+		// 	$authHeader = "SharedKey $storageAccount:$sig";
+		
+		// 	$headers = [
+		// 		'Authorization: ' . $authHeader,
+		// 		'x-ms-blob-cache-control: max-age=3600',
+		// 		'x-ms-blob-type: BlockBlob',
+		// 		'x-ms-date: ' . $currentDate,
+		// 		'x-ms-version: 2015-12-11',
+		// 		'Content-Type: video/mp4',
+		// 		'Content-Length: ' . $fileLen
+		// 	];
+		
+		// 	$ch = curl_init($destinationURL);
+		// 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		// 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		// 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		// 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+		// 	curl_setopt($ch, CURLOPT_INFILE, $handle); 
+		// 	curl_setopt($ch, CURLOPT_INFILESIZE, $fileLen); 
+		// 	curl_setopt($ch, CURLOPT_UPLOAD, true); 
+		// 	$result = curl_exec($ch);
+		
+		// 	echo ('Result<br/>');
+		// 	print_r($result);
+		
+		// 	echo ('Error<br/>');
+		// 	print_r(curl_error($ch));
+		
+		// 	curl_close($ch);
+		// 	}
+		
+		// return $destinationURL;
+	
+		
+	}
 	public function AddDataHotel()
 	{
 		$id_fasilitas = $this->input->post("id_fasilitas");
@@ -922,23 +1179,28 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$add['foto_hotel'] = isset($imagePath) ? strval($imagePath) : '#';
-		
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_hotel'] = $replcate;
+		}
+
 
 
 		$this->MSudi->AddData('tbl_hotel', $add);
@@ -970,24 +1232,27 @@ class Welcome extends CI_Controller
 		$update['updated_by'] = $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
-
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$update['foto_hotel'] = isset($imagePath) ? strval($imagePath) : '#';
-		
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_hotel'] = $replcate;
+		}
 
 
 
