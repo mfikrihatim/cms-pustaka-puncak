@@ -101,13 +101,21 @@
 					</textarea>
                 </div>
                
-                <div class="form-group">
+				<div class="form-group">
 		<label>Foto Sebelumnya</label><br>
 				<div class="form-group">
-				<img src="<?php  echo $detail['foto_wisata'];  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
-                
+				<?php 
+				
+				foreach($detail['foto_wisata'] as $foto){
+					
+
+				?>
+				<img src="<?php  echo $foto;  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+				<?php 
+				}
+				?>
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="file"/>
+                  <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">

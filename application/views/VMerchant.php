@@ -38,11 +38,11 @@
                   <th>Tools</th>
                 </tr>
                 <?php
-	if(!empty($DataMerchant))
-	{
-		foreach($DataMerchant as $ReadDS)
-		{
-	?>
+            if (!empty($DataMerchant)) {
+              foreach ($DataMerchant as $ReadDS) {
+                $arrayfotomerchant = json_decode($ReadDS->foto_merchant, TRUE);
+                $fotos = $arrayfotomerchant;
+            ?>
       <tr>
          <td><?php echo $ReadDS->id_merchant; ?></td>
          <td><?php echo $ReadDS->nama_merchant; ?></td>
@@ -50,7 +50,17 @@
          <td><?php echo $ReadDS->tlp_merchant; ?></td>
          <td><?php echo $ReadDS->email_merchant; ?></td>
          <td><?php echo $ReadDS->desc_merchant; ?></td>
-         <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_merchant; ?>"></td>        
+          <td >
+                  <?php 
+				
+				foreach($fotos as $foto){
+				?>
+				
+        <img width="50px" height="50px" src="<?php echo $foto; ?>">
+				<?php 
+				}
+				?> 
+                  </td>      
          <td><?php echo $ReadDS->created_by; ?></td>
          <td><?php echo $ReadDS->created_date; ?></td>
          <td><?php echo $ReadDS->updated_by; ?></td>
@@ -133,7 +143,7 @@
 				</div>
         <div class="form-group">
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="file"/>
+                  <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">

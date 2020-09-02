@@ -43,9 +43,11 @@
                             <th>Tools</th>
                         </tr>
                         <?php
-                        if (!empty($DataCamp)) {
-                            foreach ($DataCamp as $ReadDS) {
-                        ?>
+            if (!empty($DataCamp)) {
+              foreach ($DataCamp as $ReadDS) {
+                $arrayfotocamp = json_decode($ReadDS->foto_camp, TRUE);
+                $fotos = $arrayfotocamp;
+            ?>
                                 <tr>
                                     <td><?php echo $ReadDS->id_camp; ?></td>
                                     <td><?php echo $ReadDS->id_merchant; ?></td>
@@ -57,8 +59,18 @@
                                     <td><?php echo $ReadDS->durasi_camp; ?></td>
                                     <td><?php echo $ReadDS->rating; ?></td>
                                     <td><?php echo $ReadDS->keterangan_camp; ?></td>
-                                    <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_camp; ?>"></td> 
-                                    <td><?php echo $ReadDS->price; ?></td>
+                                    <td >
+                  <?php 
+				
+				foreach($fotos as $foto){
+				?>
+				
+        <img width="50px" height="50px" src="<?php echo $foto; ?>">
+				<?php 
+				}
+				?> 
+                  </td>      
+                   <td><?php echo $ReadDS->price; ?></td>
                                     <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>
                                     <td><?php echo $ReadDS->updated_by; ?></td>

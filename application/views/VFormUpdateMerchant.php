@@ -39,13 +39,23 @@
 					<?php echo $detail['desc_merchant']; ?>          
 					</textarea>
 				</div>
-                <label>Foto Sebelumnya</label><br>
 				<div class="form-group">
-				<img src="<?php  echo $detail['foto_merchant'];  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
-                
-					<label>Upload Image</label>
-					<input type="file" name="file"><br>
-				</div>
+		<label>Foto Sebelumnya</label><br>
+				<div class="form-group">
+				<?php 
+				
+				foreach($detail['foto_merchant'] as $foto){
+					
+
+				?>
+				<img src="<?php  echo $foto;  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+				<?php 
+				}
+				?>
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" name="file[]" multiple="multiple"/>
+                  <!-- <p class="help-block">Example block-level help text here.</p> -->
+                </div>
 			</div>
 			<input type="submit" name="btn_simpan" value="Simpan">
 		</form>

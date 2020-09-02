@@ -1,7 +1,6 @@
-
-  <div class="box">
+<div class="box">
 	<div class="box-header with-border">
-		<h3 class="box-title">Update Data Camp</h3>
+		<h3 class="box-title">Edit Data Kamar Hotel</h3>
 		<div class="box-tools pull-right">
 			<button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
 				<i class="fa fa-minus"></i></button>
@@ -10,41 +9,40 @@
 		</div>
 	</div>
 	<div class="box-body">
-		<form action="<?php echo site_url('Welcome/UpdateDataCamp'); ?>" method="post" enctype="multipart/form-data">
+		<form action="<?php echo site_url('Welcome/UpdateDataKamarHotel'); ?>" method="post" enctype="multipart/form-data">
 			<div class="box-body">
-            <div class="form-group">
-					<label>Pilih Merchant</label>
-					<input type="hidden" name="id_camp" class="form-control"   value="<?php echo $detail['id_camp']; ?>"required >
+				<!-- <div class="form-group">
+					<label>Kode Image</label>
+					<input type="number" name="kd_img" class="form-control" placeholder="Masukan Kode Image" required>
+				</div> -->
 				
-					<select class="form-control" name="id_merchant" required>
-						<option selected disabled>Pilih Merchant</option>
+				<div class="form-group">
+					<label>Pilih Merchant</label>
+					<input type="hidden" name="id_kamar" class="form-control"   value="<?php echo $detail['id_kamar']; ?>"required >
+				
+					<select class="form-control" name="id_hotel" required>
+						<option selected disabled>Pilih Hotel</option>
             <?php
-            $nama_merchant=$this->MSudi->GetDataWhere('tbl_merchant', 'is_active', 1)->result();
-							foreach($nama_merchant as $ReadDS){
+            $nama_hotel=$this->MSudi->GetDataWhere('tbl_hotel', 'is_active', 1)->result();
+							foreach($nama_hotel as $ReadDS){
 						?>
-						<option value="<?php echo $ReadDS->id_merchant; ?>"><?php echo $ReadDS->nama_merchant; ?></option>
+						<option value="<?php echo $ReadDS->id_hotel; ?>"><?php echo $ReadDS->nama_hotel; ?></option>
 						<?php
 							}
 						?>
                   </select>
 				 </div>
+				 <div class="form-group">
+					<label>Nama Kamar Hotel</label>
+					<input type="text" name="nama_kamar" class="form-control"   value="<?php echo $detail['nama_kamar']; ?>"required>
+				</div>
+				
 				<div class="form-group">
-					<label>Nama Camp</label>
-					<input type="text" name="nama_camp" class="form-control" value="<?php echo $detail['nama_camp']; ?>" required>
-                </div>
-                <div class="form-group">
-					<label>Alamat Camp</label>
-					<input type="text" name="alamat_camp" class="form-control" value="<?php echo $detail['alamat_camp']; ?>" required>
-                </div>
-                <div class="form-group">
-					<label>Telfon Camp</label>
-					<input type="number" name="tlp_camp" class="form-control" value="<?php echo $detail['tlp_camp']; ?>" required>
-                </div>
-                <div class="form-group">
-					<label>Email Camp</label>
-					<input type="email" name="email_camp" class="form-control" value="<?php echo $detail['email_camp']; ?>" required>
-                </div>
-                <div class="form-group">
+					<label>Jumlah Kamar</label>
+					<input type="number" name="jumlah_kamar" class="form-control"   value="<?php echo $detail['jumlah_kamar']; ?>"required >
+				</div>
+			
+				<div class="form-group">
 					
 					<label>Pilih Fasilitas</label>
 					
@@ -90,23 +88,29 @@
 									?>
 										</div>
 				</div>
-                <div class="form-group">
-					<label>durasi Camp</label>
-					<input type="text" name="durasi_camp" class="form-control" value="<?php echo $detail['durasi_camp']; ?>" required>
-                </div>
-                <div class="box-body pad">
-              		<label>Keterangan Camp</label>
-                    <textarea id="editor1" name="keterangan_camp" rows="10" cols="80">
-                    <?php echo $detail['keterangan_camp']; ?>                   
+		
+				
+				<div class="box-body pad">
+              		<label>Keterangan Kamar Hotel</label>
+                    <textarea id="editor1" name="keterangan_kamar" rows="10" cols="80">
+					<?php echo $detail['keterangan_kamar']; ?>             
 					</textarea>
-                </div>
-               
-				<div class="form-group">
+				</div>
+                <div class="form-group">
+					<label>Max Tamu</label>
+					<input type="number" name="max_tamu" class="form-control"   value="<?php echo $detail['max_tamu']; ?>"required >
+				</div>
+					<!-- <label>Upload Image</label>
+					<input type="file" name="userfile"><br> -->
+					<input type="hidden" name="updated_by" class="form-control"  required>
+					<input type="hidden" name="updated_date" class="form-control"  required>
+					
+        <div class="form-group">
 		<label>Foto Sebelumnya</label><br>
 				<div class="form-group">
 				<?php 
 				
-				foreach($detail['foto_camp'] as $foto){
+				foreach($detail['foto_kamar'] as $foto){
 					
 
 				?>
@@ -119,11 +123,15 @@
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">
-				<input type="hidden" name="updated_by" class="form-control"  required>
-					<input type="hidden" name="updated_date" class="form-control"  required>
-					
+                <!-- </div> -->
+			</div>
 			<input type="submit" name="btn_simpan" value="Simpan">
 		</form>
 	</div>
 </div>
-      </div>
+<!-- <script>
+	function eventKamarHotel(){
+		var id_merchant = document.getElementById('id_merchant').value;
+		window.location = "http://localhost:8080/cms-pustaka-puncak/index.php/Welcome/VFormAddKamarHotel" + "?id_merchant=" + id_merchant;
+	}
+</script> -->

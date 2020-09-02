@@ -37,16 +37,27 @@
                             <th>Tools</th>
                         </tr>
                         <?php
-                        if (!empty($DataArtikel)) {
-                            foreach ($DataArtikel as $ReadDS) {
-                        ?>
+            if (!empty($DataArtikel)) {
+              foreach ($DataArtikel as $ReadDS) {
+                $arrayfotoartikel = json_decode($ReadDS->foto_artikel, TRUE);
+                $fotos = $arrayfotoartikel;
+            ?>
                                 <tr>
                                     <td><?php echo $ReadDS->id_artikel; ?></td>
                                     <td><?php echo $ReadDS->judul_artikel; ?></td>
                                     <td><?php echo $ReadDS->desc_artikel; ?></td>
                                     <td><?php echo $ReadDS->id_kategori; ?></td>
-                                    <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_artikel; ?>"></td>  
-                                   
+                                    <td >
+                  <?php 
+				
+				foreach($fotos as $foto){
+				?>
+				
+        <img width="50px" height="50px" src="<?php echo $foto; ?>">
+				<?php 
+				}
+				?> 
+                  </td>      
                                     <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>
                                     <td><?php echo $ReadDS->updated_by; ?></td>
@@ -127,9 +138,10 @@
                
                  <div class="form-group">
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="file"/>
+                  <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
+
                 <input type="hidden" name="is_active" class="form-control" value="1">
                 <input type="hidden" name="created_by" class="form-control"  required>
 					<input type="hidden" name="created_date" class="form-control"  required>

@@ -41,13 +41,21 @@
                   </select>
                  </div>
                  
-                 <label>Foto Sebelumnya</label><br>
+				 <div class="form-group">
+		<label>Foto Sebelumnya</label><br>
 				<div class="form-group">
-				<img src="<?php  echo $detail['foto_artikel'];  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
-                
-                 <div class="form-group">
+				<?php 
+				
+				foreach($detail['foto_artikel'] as $foto){
+					
+
+				?>
+				<img src="<?php  echo $foto;  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+				<?php 
+				}
+				?>
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="file"/>
+                  <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
                

@@ -34,14 +34,25 @@
                             <th>Tools</th>
                         </tr>
                         <?php
-                        if (!empty($DataFasilitas)) {
-                            foreach ($DataFasilitas as $ReadDS) {
-                        ?>
+            if (!empty($DataFasilitas)) {
+              foreach ($DataFasilitas as $ReadDS) {
+                $arrayfotofasilitas = json_decode($ReadDS->foto_fasilitas, TRUE);
+                $fotos = $arrayfotofasilitas;
+            ?>
                                 <tr>
                                     <td><?php echo $ReadDS->id_fasilitas; ?></td>
                                     <td><?php echo $ReadDS->nama_fasilitas; ?></td>
-                                    <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_fasilitas; ?>"></td>
-                                    <td><?php echo $ReadDS->created_by; ?></td>
+                                    <td >
+                  <?php 
+				
+				foreach($fotos as $foto){
+				?>
+				
+        <img width="50px" height="50px" src="<?php echo $foto; ?>">
+				<?php 
+				}
+				?> 
+                  </td>       <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>
                                     <td><?php echo $ReadDS->updated_by; ?></td>
                                     <td><?php echo $ReadDS->updated_date; ?></td>
@@ -98,8 +109,8 @@
 					<input type="text" name="nama_fasilitas" class="form-control" placeholder="Masukan Nama fasilitas" required>
                 </div>
                 <div class="form-group">
-                  <label for="exampleInputFile">File input Foto Fasilitas</label>
-                  <input type="file" name="file"/>
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
                 <input type="hidden" name="created_by" class="form-control"  required>

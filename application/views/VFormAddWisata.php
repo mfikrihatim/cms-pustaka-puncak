@@ -78,9 +78,9 @@
                 </div>
                 <input type="hidden" name="created_by" class="form-control"  required>
                     <input type="hidden" name="created_date" class="form-control"  required>
-                    <div class="form-group">
+					<div class="form-group">
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="file"/>
+                  <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">

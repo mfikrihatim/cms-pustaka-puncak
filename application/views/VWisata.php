@@ -43,9 +43,11 @@
                             <th>Tools</th>
                         </tr>
                         <?php
-                        if (!empty($DataWisata)) {
-                            foreach ($DataWisata as $ReadDS) {
-                        ?>
+            if (!empty($DataWisata)) {
+              foreach ($DataWisata as $ReadDS) {
+                $arrayfotowisata = json_decode($ReadDS->foto_wisata, TRUE);
+                $fotos = $arrayfotowisata;
+            ?>
                                 <tr>
                                     <td><?php echo $ReadDS->id_wisata; ?></td>
                                     <td><?php echo $ReadDS->id_merchant; ?></td>
@@ -57,8 +59,18 @@
                                     <td><?php echo $ReadDS->durasi_wisata; ?></td>
                                     <td><?php echo $ReadDS->rating; ?></td>
                                     <td><?php echo $ReadDS->keterangan_wisata; ?></td>
-                                    <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_wisata; ?>"></td> 
-                                    <td><?php echo $ReadDS->price; ?></td>
+                                    <td >
+                  <?php 
+				
+				foreach($fotos as $foto){
+				?>
+				
+        <img width="50px" height="50px" src="<?php echo $foto; ?>">
+				<?php 
+				}
+				?> 
+                  </td>      
+                   <td><?php echo $ReadDS->price; ?></td>
                                     <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>
                                     <td><?php echo $ReadDS->updated_by; ?></td>

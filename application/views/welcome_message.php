@@ -186,6 +186,11 @@
                   <i class="fa  fa-plus"> <span> DATA HOTEL</i></span>
                 </a>
               </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataKamarHotel'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA KAMAR HOTEL</i></span>
+                </a>
+              </li>
 
               <li>
                 <a href="<?php echo site_url('Welcome/DataFasilitas'); ?>">
@@ -230,6 +235,11 @@
               <li>
                 <a href="<?php echo site_url('Welcome/DataPaymentMethod'); ?>">
                   <i class="fa  fa-plus"> <span> DATA PAYMENT METHOD</i></span>
+                </a>
+              </li>
+              <li>
+                <a href="<?php echo site_url('Welcome/DataAvailability'); ?>">
+                  <i class="fa  fa-plus"> <span> DATA AVAILABILITY</i></span>
                 </a>
               </li>
 

@@ -18,12 +18,20 @@
                         <input type="text" name="nama_fasilitas" value="<?php echo $detail['nama_fasilitas']; ?>" class="form-control"  required>
                     </div>
                     <div class="form-group">
-		        <label>Foto Sebelumnya</label><br>
+		<label>Foto Sebelumnya</label><br>
 				<div class="form-group">
-				<img src="<?php  echo $detail['foto_fasilitas'];  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
-                
+				<?php 
+				
+				foreach($detail['foto_fasilitas'] as $foto){
+					
+
+				?>
+				<img src="<?php  echo $foto;  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+				<?php 
+				}
+				?>
                   <label for="exampleInputFile">File input</label>
-                  <input type="file" name="file"/>
+                  <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
                 <input type="hidden" name="updated_by" class="form-control"  required>

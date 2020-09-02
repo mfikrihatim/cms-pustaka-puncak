@@ -721,7 +721,8 @@ class Welcome extends CI_Controller
 			$data['detail']['tlp_merchant'] = $tampil->tlp_merchant;
 			$data['detail']['email_merchant'] = $tampil->email_merchant;
 			$data['detail']['desc_merchant'] = $tampil->desc_merchant;
-			$data['detail']['foto_merchant'] = $tampil->foto_merchant;
+			$arrayfotomerchant = json_decode($tampil->foto_merchant, TRUE);
+			$data['detail']['foto_merchant'] = $arrayfotomerchant;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -766,22 +767,28 @@ class Welcome extends CI_Controller
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
 
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$add['foto_merchant'] = isset($imagePath) ? strval($imagePath) : '#';
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_merchant'] = $replcate;
+		}
+
 		$this->MSudi->AddData('tbl_merchant', $add);
 		redirect(site_url('Welcome/DataMerchant'));
 	}
@@ -801,23 +808,27 @@ class Welcome extends CI_Controller
 		$update['updated_date'] =  date("Y-m-d H:i:s");
 		$update['is_active'] = 1;
 
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$update['foto_merchant'] = isset($imagePath) ? strval($imagePath) : '#';
-
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_merchant'] = $replcate;
+		}
 
 		$this->MSudi->UpdateData('tbl_merchant', 'id_merchant', $id_merchant, $update);
 		redirect(site_url('Welcome/DataMerchant'));
@@ -1287,7 +1298,8 @@ class Welcome extends CI_Controller
 			$tampil = $this->MSudi->GetDataWhere('tbl_fasilitas', 'id_fasilitas', $id_fasilitas)->row();
 			$data['detail']['id_fasilitas'] = $tampil->id_fasilitas;
 			$data['detail']['nama_fasilitas'] = $tampil->nama_fasilitas;
-			$data['detail']['foto_fasilitas'] = $tampil->foto_fasilitas;
+			$arrayfotofasilitas = json_decode($tampil->foto_fasilitas, TRUE);
+			$data['detail']['foto_fasilitas'] = $arrayfotofasilitas;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -1327,23 +1339,27 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$add['foto_fasilitas'] = isset($imagePath) ? strval($imagePath) : '#';
-		
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_fasilitas'] = $replcate;
+		}
 		$this->MSudi->AddData('tbl_fasilitas', $add);
 		redirect(site_url('Welcome/DataFasilitas'));
 	}
@@ -1360,23 +1376,28 @@ class Welcome extends CI_Controller
 		$update['updated_by'] = $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$update['foto_fasilitas'] = isset($imagePath) ? strval($imagePath) : '#';
-		
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_fasilitas'] = $replcate;
+		}
+
 		$this->MSudi->UpdateData('tbl_fasilitas', 'id_fasilitas', $id_fasilitas, $update);
 		redirect(site_url('Welcome/DataFasilitas'));
 	}
@@ -1480,8 +1501,8 @@ class Welcome extends CI_Controller
 			$data['detail']['judul_artikel'] = $tampil->judul_artikel;
 			$data['detail']['desc_artikel'] = $tampil->desc_artikel;
 			$data['detail']['id_kategori'] = $tampil->id_kategori;
-			$data['detail']['foto_artikel'] = $tampil->foto_artikel;
-		
+			$arrayfotoartikel = json_decode($tampil->foto_artikel, TRUE);
+			$data['detail']['foto_artikel'] = $arrayfotoartikel;
 			$data['detail']['is_active'] = $tampil->is_active;
 			$data['content'] = 'VFormUpdateArtikel';
 		} else {
@@ -1513,23 +1534,27 @@ class Welcome extends CI_Controller
 		$add['judul_artikel'] = $this->input->post('judul_artikel');
 		$add['desc_artikel'] = $this->input->post('desc_artikel');
 		$add['id_kategori'] = $this->input->post('id_kategori');
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$add['foto_artikel'] = isset($imagePath) ? strval($imagePath) : '#';
-		
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_artikel'] = $replcate;
+		}	
 		$add['created_by'] = $data['nama'];
 		$add['created_date'] = date("Y-m-d H:i:s");
 		$add['updated_by'] = null;
@@ -1552,23 +1577,27 @@ class Welcome extends CI_Controller
 		$update['judul_artikel'] = $this->input->post('judul_artikel');
 		$update['desc_artikel'] = $this->input->post('desc_artikel');
 		$update['id_kategori'] = $this->input->post('id_kategori');
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$update['foto_artikel'] = isset($imagePath) ? strval($imagePath) : '#';
-		
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_artikel'] = $replcate;
+		}
 		$update['updated_by'] = $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 	
@@ -1617,7 +1646,8 @@ class Welcome extends CI_Controller
 			$data['detail']['durasi_camp'] = $tampil->durasi_camp;
 			$data['detail']['rating'] = $tampil->rating;
 			$data['detail']['keterangan_camp'] = $tampil->keterangan_camp;
-			$data['detail']['foto_camp'] = $tampil->foto_camp;
+			$arrayfotocamp = json_decode($tampil->foto_camp, TRUE);
+			$data['detail']['foto_camp'] = $arrayfotocamp;
 			$data['detail']['price'] = $tampil->price;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
@@ -1679,22 +1709,28 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$add['foto_camp'] = isset($imagePath) ? strval($imagePath) : '#';
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_camp'] = $replcate;
+
+		}	
 		$this->MSudi->AddData('tbl_camp', $add);
 		redirect(site_url('Welcome/DataCamp'));
 	}
@@ -1727,22 +1763,27 @@ class Welcome extends CI_Controller
 		$update['updated_by'] =  $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$update['foto_camp'] = isset($imagePath) ? strval($imagePath) : '#';
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_camp'] = $replcate;
+		}
 	
 		
 		$this->MSudi->UpdateData('tbl_camp', 'id_camp', $id_camp, $update);
@@ -1788,7 +1829,8 @@ class Welcome extends CI_Controller
 			$data['detail']['durasi_wisata'] = $tampil->durasi_wisata;
 			$data['detail']['rating'] = $tampil->rating;
 			$data['detail']['keterangan_wisata'] = $tampil->keterangan_wisata;
-			$data['detail']['foto_wisata'] = $tampil->foto_wisata;
+			$arrayfotowisata = json_decode($tampil->foto_wisata, TRUE);
+			$data['detail']['foto_wisata'] = $arrayfotowisata;
 			$data['detail']['price'] = $tampil->price;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
@@ -1850,22 +1892,28 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$add['foto_wisata'] = isset($imagePath) ? strval($imagePath) : '#';
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_wisata'] = $replcate;
+
+		}	
 		$this->MSudi->AddData('tbl_wisata', $add);
 		redirect(site_url('Welcome/DataWisata'));
 	}
@@ -1898,23 +1946,28 @@ class Welcome extends CI_Controller
 		$update['updated_by'] =  $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$update['foto_wisata'] = isset($imagePath) ? strval($imagePath) : '#';
-	
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_wisata'] = $replcate;
+
+		}	
 		
 		$this->MSudi->UpdateData('tbl_wisata', 'id_wisata', $id_wisata, $update);
 		redirect(site_url('Welcome/DataWisata'));
@@ -2025,7 +2078,8 @@ class Welcome extends CI_Controller
 			$data['detail']['durasi_exp'] = $tampil->durasi_exp;
 			$data['detail']['id_minimun_booking'] = $tampil->id_minimun_booking;
 			$data['detail']['id_merchant'] = $tampil->id_merchant;
-			$data['detail']['foto_experience'] = $tampil->foto_experience;
+			$arrayfotoexperience = json_decode($tampil->foto_experience, TRUE);
+			$data['detail']['foto_experience'] = $arrayfotoexperience;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -2090,23 +2144,28 @@ class Welcome extends CI_Controller
 		$add['updated_date'] = null;
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$add['foto_experience'] = isset($imagePath) ? strval($imagePath) : '#';
-	
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_experience'] = $replcate;
+
+		}	
 		$add['is_active'] = 1;
 				
 		$this->MSudi->AddData('tbl_experience', $add);
@@ -2144,23 +2203,28 @@ class Welcome extends CI_Controller
 		$update['updated_by'] = $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
-            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
-            $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
-            }elseif($media_type == 'video/mp4'){
-            $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
-            }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
-        //     if (!$file && is_wp_error($imagePath)) {
-        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
-        // }
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
 		}
-		$update['foto_experience'] = isset($imagePath) ? strval($imagePath) : '#';
-	
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_experience'] = $replcate;
+
+		}	
 	
 				
 		
@@ -2305,6 +2369,310 @@ class Welcome extends CI_Controller
 		redirect(site_url('Welcome/DataPaymentMethod'));
 	}
 
+
+
+
+
+	public function DataKamarHotel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		if ($this->uri->segment(4) == 'view') {
+			$id_kamar = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_kamar_hotel', 'id_kamar', $id_kamar)->row();
+			$data['id_hotel'] = $this->MSudi->GetData('tbl_hotel');
+			$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+			$data['nama_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+			$data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
+			$data['detail']['id_kamar'] = $tampil->id_kamar;
+			$data['detail']['id_hotel'] = $tampil->id_hotel;
+			$data['detail']['nama_kamar'] = $tampil->nama_kamar;
+			$data['detail']['jumlah_kamar'] = $tampil->jumlah_kamar;
+			$arrayidfasilitas = json_decode($tampil->id_fasilitas, TRUE);
+			$data['detail']['id_fasilitas'] = $arrayidfasilitas;
+			$data['detail']['keterangan_kamar'] = $tampil->keterangan_kamar;
+			$data['detail']['max_tamu'] = $tampil->max_tamu;
+			$arrayfotokamar = json_decode($tampil->foto_kamar, TRUE);
+			$data['detail']['foto_kamar'] = $arrayfotokamar;
+			$data['detail']['foto_profile_kamar'] = $tampil->foto_profile_kamar;
+			$data['detail']['created_by'] = $tampil->created_by;
+			$data['detail']['created_date'] = $tampil->created_date;
+			$data['detail']['updated_by'] = $tampil->updated_by;
+			$data['detail']['updated_date'] = $tampil->updated_date;
+			$data['detail']['deleted_by'] = $tampil->deleted_by;
+			$data['detail']['deleted_date'] = $tampil->deleted_date;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateKamarHotel';
+		} else {
+			$data['DataKamarHotel'] = $this->MSudi->GetDataWhere1('tbl_kamar_hotel', 'is_active', 1, 'id_kamar','asc')->result();
+			$data['content'] = 'VKamarHotel';
+			
+		}
+
+
+		$this->load->view('welcome_message', $data);
+	}
+	public function VFormAddKamarHotel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$data['content'] = 'VFormAddKamarHotel';
+	
+		$data['DataHotel'] = $this->MSudi->GetDataWhere('tbl_hotel', 'is_active', 1)->result();
+		$data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
+
+		$data['id_hotel'] = $this->MSudi->GetData('tbl_hotel');
+		$data['nama_hotel'] = $this->MSudi->GetData('tbl_hotel');
+		$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+		$data['nama_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
+		
+		$this->load->view('welcome_message', $data);
+	}
+	public function AddDataKamarHotel()
+	{
+		$id_fasilitas = $this->input->post("id_fasilitas");
+		if($id_fasilitas == null)
+		$id_fasilitas =  [];
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$add['id_hotel'] = $this->input->post('id_hotel');
+		$add['nama_kamar'] = $this->input->post('nama_kamar');
+		$add['jumlah_kamar'] = $this->input->post('jumlah_kamar');
+		$add['id_fasilitas'] = json_encode($id_fasilitas);
+		$add['keterangan_kamar'] = $this->input->post('keterangan_kamar');
+		$add['max_tamu'] = $this->input->post('max_tamu');
+		$add['created_by'] = $data['nama'];
+		$add['created_date'] = date("Y-m-d H:i:s");
+		$add['updated_by'] = null;
+		$add['updated_date'] = null;
+		$add['deleted_by'] = null;
+		$add['deleted_date'] = null;
+		$add['is_active'] = 1;
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
+		}
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$add['foto_kamar'] = $replcate;
+		}
+
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_profile_kamar'] = isset($imagePath) ? strval($imagePath) : '#';
+	
+
+		$this->MSudi->AddData('tbl_kamar_hotel', $add);
+		redirect(site_url('Welcome/DataKamarHotel'));
+	}
+	public function UpdateDataKamarHotel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		$id_fasilitas = $this->input->post("id_fasilitas");
+		if($id_fasilitas == null|| $id_fasilitas == ""){
+			$id_fasilitas = "[]";
+		}else{
+			$id_fasilitas = json_encode($id_fasilitas);
+		}
+		
+		$id_kamar = $this->input->post('id_kamar');
+		$update['id_hotel'] = $this->input->post('id_hotel');
+		$update['nama_kamar'] = $this->input->post('nama_kamar');
+		$update['jumlah_kamar'] = $this->input->post('jumlah_kamar');
+		$update['id_fasilitas'] = $id_fasilitas;
+		$update['keterangan_kamar'] = $this->input->post('keterangan_kamar');
+		$update['max_tamu'] = $this->input->post('max_tamu');
+		$update['updated_by'] = $data['nama'];
+		$update['updated_date'] = date("Y-m-d H:i:s");
+	
+		$update['is_active'] = 1;
+		$imagePathCollections = [];
+		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
+		if($file_collections !== ''){
+            foreach($file_collections['tmp_name'] as $i => $val){
+                $unique_file = uniqid() . '.jpeg';
+                $file_collections['name'][$i] =  $unique_file;
+                $imagePathCollection = $this->uploadBlobCollectionList($file_collections['name'][$i],$val,'file',$i);
+                //  if (!$file_collections && is_wp_error($imagePath)) {
+                //  $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+            // }
+            // $deleteImageTemp =  dirname(__FILE__)."/".$unique_file;
+            // unlink($deleteImageTemp);
+            array_push($imagePathCollections,$imagePathCollection);
+		}
+	}
+		if(count($imagePathCollections) > 0){
+			
+			$image = json_encode($imagePathCollections);
+			$replcate = str_replace("\/", "/", $image);
+			$update['foto_kamar'] = $replcate;
+		}
+
+		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
+		if ($file !== '')  {
+            $media_type =  $_FILES['file']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $file['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $file['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_profile_kamar'] = isset($imagePath) ? strval($imagePath) : '#';
+	
+
+
+		$this->MSudi->UpdateData('tbl_kamar_hotel', 'id_kamar', $id_kamar, $update);
+		redirect(site_url('Welcome/DataKamarHotel'));
+	}
+	public function DeleteDataKamarHotel()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$id_kamar = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		$update['deleted_by'] = $data['nama'];
+		$update['deleted_date'] = date("Y-m-d H:i:s"); 
+		
+		$this->MSudi->UpdateData('tbl_kamar_hotel', 'id_kamar', $id_kamar, $update);
+		redirect(site_url('Welcome/DataKamarHotel'));
+	}
+
+
+	public function DataAvailability()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		if ($this->uri->segment(4) == 'view') {
+			$id_availability = $this->uri->segment(3);
+			$tampil = $this->MSudi->GetDataWhere('tbl_availability', 'id_availability', $id_availability)->row();
+			$data['detail']['id_availability'] = $tampil->id_availability;
+			$data['detail']['availability_years'] = $tampil->availability_years;
+			$data['detail']['availability_month'] = $tampil->availability_month;
+			$data['detail']['availability_date'] = $tampil->availability_date;
+			$data['detail']['id_exp'] = $tampil->id_exp;
+			$data['detail']['id_hotel'] = $tampil->id_hotel;
+			$data['detail']['id_camp'] = $tampil->id_camp;
+			$data['detail']['id_wisata'] = $tampil->id_wisata;
+			$data['detail']['is_active'] = $tampil->is_active;
+			$data['content'] = 'VFormUpdateAvailability';
+		} else {
+			$data['DataAvailability'] = $this->MSudi->GetDataWhere1('tbl_availability', 'is_active', 1, 'id_availability','asc')->result();
+			$data['content'] = 'VAvailability';
+		}
+
+
+		$this->load->view('welcome_message', $data);
+	}
+	
+	public function AddDataAvailability()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+		$data['id_exp'] = $this->MSudi->GetData('tbl_experience');
+		$data['judul_exp'] = $this->MSudi->GetData('tbl_experience');
+		$data['id_hotel'] = $this->MSudi->GetData('tbl_hotel');
+		$data['nama_hotel'] = $this->MSudi->GetData('tbl_hotel');
+		$data['id_camp'] = $this->MSudi->GetData('tbl_camp');
+		$data['nama_camp'] = $this->MSudi->GetData('tbl_camp');
+		$data['id_wisata'] = $this->MSudi->GetData('tbl_wisata');
+		$data['nama_wisata'] = $this->MSudi->GetData('tbl_wisata');
+
+
+		$add['availability_years'] = date('Y');
+		$add['availability_month'] = date('M');
+		$add['availability_date'] = date('d');
+		$add['id_exp'] = $this->input->post('id_exp');
+		$add['id_hotel'] = $this->input->post('id_hotel');
+		$add['id_camp'] = $this->input->post('id_camp');
+		$add['id_wisata'] = $this->input->post('id_wisata');
+		$add['is_active'] = 1;
+				
+		$this->MSudi->AddData('tbl_availability', $add);
+		redirect(site_url('Welcome/DataAvailability'));
+	}
+	public function UpdateDataAvailability()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+
+		$id_availability = $this->input->post('id_availability');
+		$data['id_exp'] = $this->MSudi->GetData('tbl_experience');
+		$data['judul_exp'] = $this->MSudi->GetData('tbl_experience');
+		$data['id_hotel'] = $this->MSudi->GetData('tbl_hotel');
+		$data['nama_hotel'] = $this->MSudi->GetData('tbl_hotel');
+		$data['id_camp'] = $this->MSudi->GetData('tbl_camp');
+		$data['nama_camp'] = $this->MSudi->GetData('tbl_camp');
+		$data['id_wisata'] = $this->MSudi->GetData('tbl_wisata');
+		$data['nama_wisata'] = $this->MSudi->GetData('tbl_wisata');
+
+
+		$update['availability_years'] = date('Y');
+		$update['availability_month'] = date('M');
+		$update['availability_date'] = date('d');
+		$update['id_exp'] = $this->input->post('id_exp');
+		$update['id_hotel'] = $this->input->post('id_hotel');
+		$update['id_camp'] = $this->input->post('id_camp');
+		$update['id_wisata'] = $this->input->post('id_wisata');
+		$update['is_active'] = 1;
+	
+		
+		$this->MSudi->UpdateData('tbl_availability', 'id_availability', $id_availability, $update);
+		redirect(site_url('Welcome/DataAvailability'));
+	}
+	public function DeleteDataAvailability()
+	{
+		$data['nama'] = $this->session->userdata('nama');
+		$data['foto_profile'] = $this->session->userdata('foto_profile');
+
+		$id_availability = $this->uri->segment('3');
+		$update['is_active'] = 0;
+		
+		$this->MSudi->UpdateData('tbl_availability', 'id_availability', $id_availability, $update);
+		redirect(site_url('Welcome/DataAvailability'));
+	}
 
 	public function Logout()
 	{

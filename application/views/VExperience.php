@@ -48,9 +48,11 @@
                             <th>Tools</th>
                         </tr>
                         <?php
-                        if (!empty($DataExperience)) {
-                            foreach ($DataExperience as $ReadDS) {
-                        ?>
+            if (!empty($DataExperience)) {
+              foreach ($DataExperience as $ReadDS) {
+                $arrayfotoexperience = json_decode($ReadDS->foto_experience, TRUE);
+                $fotos = $arrayfotoexperience;
+            ?>
                                 <tr>
                                     <td><?php echo $ReadDS->id_exp; ?></td>
                                     <td><?php echo $ReadDS->judul_exp; ?></td>
@@ -68,7 +70,17 @@
                                     <td><?php echo $ReadDS->durasi_exp; ?></td>
                                     <td><?php echo $ReadDS->id_minimun_booking; ?></td>
                                     <td><?php echo $ReadDS->id_merchant; ?></td>
-                                    <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_experience; ?>"></td> 
+                                    <td >
+                  <?php 
+				
+				foreach($fotos as $foto){
+				?>
+				
+        <img width="50px" height="50px" src="<?php echo $foto; ?>">
+				<?php 
+				}
+				?> 
+                  </td>     
                                     <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>
                                     <td><?php echo $ReadDS->updated_by; ?></td>
