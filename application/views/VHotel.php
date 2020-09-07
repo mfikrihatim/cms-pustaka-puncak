@@ -59,13 +59,16 @@
                   <td><?php echo $ReadDS->keterangan_hotels; ?></td>
                   <td >
                   <?php 
+				if ($fotos != Null) {
+          foreach($fotos as $foto){
 				
-				foreach($fotos as $foto){
+       
 				?>
 				
         <img width="50px" height="50px" src="<?php echo $foto; ?>">
 				<?php 
-				}
+        }
+      }
 				?> 
                   </td> 
                   <td><?php echo $ReadDS->created_by; ?></td>

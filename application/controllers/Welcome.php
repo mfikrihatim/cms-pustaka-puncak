@@ -859,6 +859,7 @@ class Welcome extends CI_Controller
 		if ($this->uri->segment(4) == 'view') {
 			$id_hotel = $this->uri->segment(3);
 			$tampil = $this->MSudi->GetDataWhere('tbl_hotel', 'id_hotel', $id_hotel)->row();
+			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_hotel', $id_hotel)->row();
 			$data['id_merchant'] = $this->MSudi->GetData('tbl_merchant');
 			$data['nama_merchant'] = $this->MSudi->GetData('tbl_merchant');
 			$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
@@ -876,6 +877,10 @@ class Welcome extends CI_Controller
 			$data['detail']['keterangan_hotels'] = $tampil->keterangan_hotels;
 			$arrayfotohotel = json_decode($tampil->foto_hotel, TRUE);
 			$data['detail']['foto_hotel'] = $arrayfotohotel;
+			$data['detail']['price'] = $tampil1->price;
+			$data['detail']['id_payment'] = $tampil1->id_payment;
+			$data['detail']['custom_price'] = $tampil1->custom_price;
+			$data['detail']['currency'] = $tampil1->currency;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -1190,6 +1195,20 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
+
+		$add1['id_hotel'] = $this->input->post('id_hotel1');
+		$add1['price'] = $this->input->post('price');
+		$add1['custom_price'] = $this->input->post('custom_price');
+		$add1['currency'] = $this->input->post('currency');
+		$add1['created_by'] = $data['nama'];
+		$add1['created_date'] = date("Y-m-d H:i:s");
+		$add1['updated_by'] = null;
+		$add1['updated_date'] = null;
+		$add1['deleted_by'] = null;
+		$add1['deleted_date'] = null;
+		$add1['is_active'] = 1;
+
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1214,7 +1233,9 @@ class Welcome extends CI_Controller
 
 
 
-		$this->MSudi->AddData('tbl_hotel', $add);
+		$idhotel = $this->MSudi->AddData('tbl_hotel',$add);
+		$add1['id_hotel']=$idhotel;
+		$this->MSudi->AddData('tbl_payment',$add1);
 		redirect(site_url('Welcome/DataHotel'));
 	}
 	public function UpdateDataHotel()
@@ -1231,6 +1252,7 @@ class Welcome extends CI_Controller
 		}
 		
 		$id_hotel = $this->input->post('id_hotel');
+		$id_payment = $this->input->post('id_payment');
 		$update['id_merchant'] = $this->input->post('id_merchant');
 		$update['nama_hotel'] = $this->input->post('nama_hotel');
 		$update['alamat_hotel'] = $this->input->post('alamat_hotel');
@@ -1243,6 +1265,16 @@ class Welcome extends CI_Controller
 		$update['updated_by'] = $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
+		$update1['id_hotel'] = $this->input->post('id_hotel1');
+		$update1['price'] = $this->input->post('price');
+		$update1['custom_price'] = $this->input->post('custom_price');
+		$update1['currency'] = $this->input->post('currency');
+		
+		$update1['updated_by'] =  $data['nama'];
+		$update1['updated_date'] = date("Y-m-d H:i:s");
+	
+		$update1['is_active'] = 1;
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1268,6 +1300,7 @@ class Welcome extends CI_Controller
 
 
 		$this->MSudi->UpdateData('tbl_hotel', 'id_hotel', $id_hotel, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
 		redirect(site_url('Welcome/DataHotel'));
 	}
 	public function DeleteDataHotel()
@@ -1280,6 +1313,12 @@ class Welcome extends CI_Controller
 		$update['deleted_by'] =$data['nama'] ;
 		$update['deleted_date'] = date("Y-m-d H:i:s"); 
 		
+		$update1['is_active'] = 0;
+		$update1['deleted_by'] = $data['nama'] ;
+		$update1['deleted_date'] =  date("Y-m-d H:i:s");
+
+		
+		$this->MSudi->UpdateData('tbl_payment', 'id_hotel', $id_hotel, $update1);
 		$this->MSudi->UpdateData('tbl_hotel', 'id_hotel', $id_hotel, $update);
 		redirect(site_url('Welcome/DataHotel'));
 	}
@@ -1635,6 +1674,7 @@ class Welcome extends CI_Controller
 			$data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
 	
 			$tampil = $this->MSudi->GetDataWhere('tbl_camp', 'id_camp', $id_camp)->row();
+			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_camp', $id_camp)->row();
 			$data['detail']['id_camp'] = $tampil->id_camp;
 			$data['detail']['id_merchant'] = $tampil->id_merchant;
 			$data['detail']['nama_camp'] = $tampil->nama_camp;
@@ -1649,6 +1689,10 @@ class Welcome extends CI_Controller
 			$arrayfotocamp = json_decode($tampil->foto_camp, TRUE);
 			$data['detail']['foto_camp'] = $arrayfotocamp;
 			$data['detail']['price'] = $tampil->price;
+			$data['detail']['price'] = $tampil1->price;
+			$data['detail']['id_payment'] = $tampil1->id_payment;
+			$data['detail']['custom_price'] = $tampil1->custom_price;
+			$data['detail']['currency'] = $tampil1->currency;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -1701,7 +1745,7 @@ class Welcome extends CI_Controller
 		$add['durasi_camp'] = $this->input->post('durasi_camp');
 		$add['rating'] = null;
 		$add['keterangan_camp'] = $this->input->post('keterangan_camp');
-		$add['price'] = null;
+		$add['price'] = $this->input->post('price');
 		$add['created_by'] = $data['nama'];
 		$add['created_date'] = date("Y-m-d H:i:s");
 		$add['updated_by'] = null;
@@ -1709,6 +1753,21 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
+
+
+		$add1['id_camp'] = $this->input->post('id_camp1');
+		$add1['price'] = $this->input->post('price');
+		$add1['custom_price'] = $this->input->post('custom_price');
+		$add1['currency'] = $this->input->post('currency');
+		$add1['created_by'] = $data['nama'];
+		$add1['created_date'] = date("Y-m-d H:i:s");
+		$add1['updated_by'] = null;
+		$add1['updated_date'] = null;
+		$add1['deleted_by'] = null;
+		$add1['deleted_date'] = null;
+		$add1['is_active'] = 1;
+
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1731,7 +1790,9 @@ class Welcome extends CI_Controller
 			$add['foto_camp'] = $replcate;
 
 		}	
-		$this->MSudi->AddData('tbl_camp', $add);
+		$idcamp = $this->MSudi->AddData('tbl_camp',$add);
+		$add1['id_camp']=$idcamp;
+		$this->MSudi->AddData('tbl_payment',$add1);
 		redirect(site_url('Welcome/DataCamp'));
 	}
 	public function UpdateDataCamp()
@@ -1748,7 +1809,7 @@ class Welcome extends CI_Controller
 		
 
 		$id_camp = $this->input->post('id_camp');
-
+		$id_payment = $this->input->post('id_payment');
 		
 		$update['id_merchant'] = $this->input->post('id_merchant');
 		$update['nama_camp'] = $this->input->post('nama_camp');
@@ -1759,10 +1820,19 @@ class Welcome extends CI_Controller
 		$update['durasi_camp'] = $this->input->post('durasi_camp');
 		$update['rating'] = null;
 		$update['keterangan_camp'] = $this->input->post('keterangan_camp');
-		$update['price'] = null;
+		$update['price'] =  $this->input->post('price');
 		$update['updated_by'] =  $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
+		
+		$update1['id_camp'] = $this->input->post('id_camp1');
+		$update1['price'] = $this->input->post('price');
+		$update1['custom_price'] = $this->input->post('custom_price');
+		$update1['currency'] = $this->input->post('currency');
+		$update1['updated_by'] = $data['nama'];
+		$update1['updated_date'] = date("Y-m-d H:i:s");
+		$update1['is_active'] = 1;
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1787,6 +1857,7 @@ class Welcome extends CI_Controller
 	
 		
 		$this->MSudi->UpdateData('tbl_camp', 'id_camp', $id_camp, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
 		redirect(site_url('Welcome/DataCamp'));
 	}
 	public function DeleteDataCamp()
@@ -1798,7 +1869,13 @@ class Welcome extends CI_Controller
 		$update['is_active'] = 0;
 		$update['deleted_by'] = $data['nama'] ;
 		$update['deleted_date'] =  date("Y-m-d H:i:s");
+
+		$update1['is_active'] = 0;
+		$update1['deleted_by'] = $data['nama'] ;
+		$update1['deleted_date'] =  date("Y-m-d H:i:s");
+
 		$this->MSudi->UpdateData('tbl_camp', 'id_camp', $id_camp, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_camp', $id_camp, $update1);
 		redirect(site_url('Welcome/DataCamp'));
 	}
 
@@ -1818,6 +1895,7 @@ class Welcome extends CI_Controller
 			$data['DataFasilitas'] = $this->MSudi->GetDataWhere('tbl_fasilitas', 'is_active', 1)->result();
 	
 			$tampil = $this->MSudi->GetDataWhere('tbl_wisata', 'id_wisata', $id_wisata)->row();
+			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_wisata', $id_wisata)->row();
 			$data['detail']['id_wisata'] = $tampil->id_wisata;
 			$data['detail']['id_merchant'] = $tampil->id_merchant;
 			$data['detail']['nama_wisata'] = $tampil->nama_wisata;
@@ -1832,6 +1910,10 @@ class Welcome extends CI_Controller
 			$arrayfotowisata = json_decode($tampil->foto_wisata, TRUE);
 			$data['detail']['foto_wisata'] = $arrayfotowisata;
 			$data['detail']['price'] = $tampil->price;
+			$data['detail']['price'] = $tampil1->price;
+			$data['detail']['id_payment'] = $tampil1->id_payment;
+			$data['detail']['custom_price'] = $tampil1->custom_price;
+			$data['detail']['currency'] = $tampil1->currency;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -1884,7 +1966,7 @@ class Welcome extends CI_Controller
 		$add['durasi_wisata'] = $this->input->post('durasi_wisata');
 		$add['rating'] = null;
 		$add['keterangan_wisata'] = $this->input->post('keterangan_wisata');
-		$add['price'] = null;
+		$add['price'] = $this->input->post('price');
 		$add['created_by'] = $data['nama'];
 		$add['created_date'] = date("Y-m-d H:i:s");
 		$add['updated_by'] = null;
@@ -1892,6 +1974,19 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
+
+		$add1['id_wisata'] = $this->input->post('id_wisata1');
+		$add1['price'] = $this->input->post('price');
+		$add1['custom_price'] = $this->input->post('custom_price');
+		$add1['currency'] = $this->input->post('currency');
+		$add1['created_by'] = $data['nama'];
+		$add1['created_date'] = date("Y-m-d H:i:s");
+		$add1['updated_by'] = null;
+		$add1['updated_date'] = null;
+		$add1['deleted_by'] = null;
+		$add1['deleted_date'] = null;
+		$add1['is_active'] = 1;
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1914,7 +2009,9 @@ class Welcome extends CI_Controller
 			$add['foto_wisata'] = $replcate;
 
 		}	
-		$this->MSudi->AddData('tbl_wisata', $add);
+		$idwisata = $this->MSudi->AddData('tbl_wisata',$add);
+		$add1['id_wisata']=$idwisata;
+		$this->MSudi->AddData('tbl_payment',$add1);
 		redirect(site_url('Welcome/DataWisata'));
 	}
 	public function UpdateDataWisata()
@@ -1931,7 +2028,7 @@ class Welcome extends CI_Controller
 		
 
 		$id_wisata = $this->input->post('id_wisata');
-
+		$id_payment = $this->input->post('id_payment');
 		
 		$update['id_merchant'] = $this->input->post('id_merchant');
 		$update['nama_wisata'] = $this->input->post('nama_wisata');
@@ -1942,10 +2039,20 @@ class Welcome extends CI_Controller
 		$update['durasi_wisata'] = $this->input->post('durasi_wisata');
 		$update['rating'] = null;
 		$update['keterangan_wisata'] = $this->input->post('keterangan_wisata');
-		$update['price'] = null;
+		$update['price'] = $this->input->post('price');
 		$update['updated_by'] =  $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
+		$update1['id_wisata'] = $this->input->post('id_wisata1');
+		$update1['price'] = $this->input->post('price');
+		$update1['custom_price'] = $this->input->post('custom_price');
+		$update1['currency'] = $this->input->post('currency');
+
+		$update1['updated_by'] =$data['nama'];
+		$update1['updated_date'] = date("Y-m-d H:i:s");
+		
+		$update1['is_active'] = 1;
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1970,6 +2077,7 @@ class Welcome extends CI_Controller
 		}	
 		
 		$this->MSudi->UpdateData('tbl_wisata', 'id_wisata', $id_wisata, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
 		redirect(site_url('Welcome/DataWisata'));
 	}
 	public function DeleteDataWisata()
@@ -1981,7 +2089,11 @@ class Welcome extends CI_Controller
 		$update['is_active'] = 0;
 		$update['deleted_by'] = $data['nama'] ;
 		$update['deleted_date'] =  date("Y-m-d H:i:s");
+		$update1['is_active'] = 0;
+		$update1['deleted_by'] = $data['nama'] ;
+		$update1['deleted_date'] =  date("Y-m-d H:i:s");
 		$this->MSudi->UpdateData('tbl_wisata', 'id_wisata', $id_wisata, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_wisata', $id_wisata, $update1);
 		redirect(site_url('Welcome/DataWisata'));
 	}
 
@@ -2061,6 +2173,7 @@ class Welcome extends CI_Controller
 	
 			$id_exp = $this->uri->segment(3);
 			$tampil = $this->MSudi->GetDataWhere('tbl_experience', 'id_exp', $id_exp)->row();
+			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_exp', $id_exp)->row();
 			$data['detail']['id_exp'] = $tampil->id_exp;
 			$data['detail']['judul_exp'] = $tampil->judul_exp;
 			$data['detail']['id_tipe_exp'] = $tampil->id_tipe_exp;
@@ -2080,6 +2193,10 @@ class Welcome extends CI_Controller
 			$data['detail']['id_merchant'] = $tampil->id_merchant;
 			$arrayfotoexperience = json_decode($tampil->foto_experience, TRUE);
 			$data['detail']['foto_experience'] = $arrayfotoexperience;
+			$data['detail']['price'] = $tampil1->price;
+			$data['detail']['id_payment'] = $tampil1->id_payment;
+			$data['detail']['custom_price'] = $tampil1->custom_price;
+			$data['detail']['currency'] = $tampil1->currency;
 			$data['detail']['created_by'] = $tampil->created_by;
 			$data['detail']['created_date'] = $tampil->created_date;
 			$data['detail']['updated_by'] = $tampil->updated_by;
@@ -2144,6 +2261,18 @@ class Welcome extends CI_Controller
 		$add['updated_date'] = null;
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
+
+		$add1['id_exp'] = $this->input->post('id_exp1');
+		$add1['price'] = $this->input->post('price');
+		$add1['custom_price'] = $this->input->post('custom_price');
+		$add1['currency'] = $this->input->post('currency');
+		$add1['created_by'] = $data['nama'];
+		$add1['created_date'] = date("Y-m-d H:i:s");
+		$add1['updated_by'] = null;
+		$add1['updated_date'] = null;
+		$add1['deleted_by'] = null;
+		$add1['deleted_date'] = null;
+		$add1['is_active'] = 1;
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -2168,7 +2297,9 @@ class Welcome extends CI_Controller
 		}	
 		$add['is_active'] = 1;
 				
-		$this->MSudi->AddData('tbl_experience', $add);
+		$idexp = $this->MSudi->AddData('tbl_experience',$add);
+		$add1['id_exp']=$idexp;
+		$this->MSudi->AddData('tbl_payment',$add1);
 		redirect(site_url('Welcome/DataExperience'));
 	}
 	public function UpdateDataExperience()
@@ -2183,6 +2314,8 @@ class Welcome extends CI_Controller
 		}
 
 		$id_exp = $this->input->post('id_exp');
+		
+		$id_payment = $this->input->post('id_payment');
 		
 		$update['judul_exp'] = $this->input->post('judul_exp');
 		$update['id_tipe_exp'] = $this->input->post('id_tipe_exp');
@@ -2203,6 +2336,16 @@ class Welcome extends CI_Controller
 		$update['updated_by'] = $data['nama'];
 		$update['updated_date'] = date("Y-m-d H:i:s");
 		
+		$update1['id_exp'] = $this->input->post('id_exp1');
+		$update1['price'] = $this->input->post('price');
+		$update1['custom_price'] = $this->input->post('custom_price');
+		$update1['currency'] = $this->input->post('currency');
+
+		$update1['updated_by'] =  $data['nama'];
+		$update1['updated_date'] = date("Y-m-d H:i:s");
+	
+		$update1['is_active'] = 1;
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -2229,6 +2372,7 @@ class Welcome extends CI_Controller
 				
 		
 		$this->MSudi->UpdateData('tbl_experience', 'id_exp', $id_exp, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
 		redirect(site_url('Welcome/DataExperience'));
 	}
 	public function DeleteDataExperience()
@@ -2241,6 +2385,12 @@ class Welcome extends CI_Controller
 		$update['deleted_by'] = $data['nama'];
 		$update['deleted_date'] = date("Y-m-d H:i:s");
 		
+		$update1['is_active'] = 0;
+		$update1['deleted_by'] = $data['nama'] ;
+		$update1['deleted_date'] =  date("Y-m-d H:i:s");
+
+		
+		$this->MSudi->UpdateData('tbl_payment', 'id_exp', $id_exp, $update1);
 		$this->MSudi->UpdateData('tbl_experience', 'id_exp', $id_exp, $update);
 		redirect(site_url('Welcome/DataExperience'));
 	}
@@ -2382,6 +2532,7 @@ class Welcome extends CI_Controller
 		if ($this->uri->segment(4) == 'view') {
 			$id_kamar = $this->uri->segment(3);
 			$tampil = $this->MSudi->GetDataWhere('tbl_kamar_hotel', 'id_kamar', $id_kamar)->row();
+			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_kamar_hotel', $id_kamar)->row();
 			$data['id_hotel'] = $this->MSudi->GetData('tbl_hotel');
 			$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
 			$data['nama_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
@@ -2394,6 +2545,10 @@ class Welcome extends CI_Controller
 			$data['detail']['id_fasilitas'] = $arrayidfasilitas;
 			$data['detail']['keterangan_kamar'] = $tampil->keterangan_kamar;
 			$data['detail']['max_tamu'] = $tampil->max_tamu;
+			$data['detail']['price'] = $tampil1->price;
+			$data['detail']['id_payment'] = $tampil1->id_payment;
+			$data['detail']['custom_price'] = $tampil1->custom_price;
+			$data['detail']['currency'] = $tampil1->currency;
 			$arrayfotokamar = json_decode($tampil->foto_kamar, TRUE);
 			$data['detail']['foto_kamar'] = $arrayfotokamar;
 			$data['detail']['foto_profile_kamar'] = $tampil->foto_profile_kamar;
@@ -2452,6 +2607,20 @@ class Welcome extends CI_Controller
 		$add['deleted_by'] = null;
 		$add['deleted_date'] = null;
 		$add['is_active'] = 1;
+
+		$add1['id_kamar_hotel'] = $this->input->post('id_kamar_hotel1');
+		$add1['price'] = $this->input->post('price');
+		$add1['custom_price'] = $this->input->post('custom_price');
+		$add1['currency'] = $this->input->post('currency');
+		$add1['created_by'] = $data['nama'];
+		$add1['created_date'] = date("Y-m-d H:i:s");
+		$add1['updated_by'] = null;
+		$add1['updated_date'] = null;
+		$add1['deleted_by'] = null;
+		$add1['deleted_date'] = null;
+		$add1['is_active'] = 1;
+
+	
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -2492,7 +2661,9 @@ class Welcome extends CI_Controller
 		$add['foto_profile_kamar'] = isset($imagePath) ? strval($imagePath) : '#';
 	
 
-		$this->MSudi->AddData('tbl_kamar_hotel', $add);
+		$idkamar = $this->MSudi->AddData('tbl_kamar_hotel',$add);
+		$add1['id_kamar_hotel']=$idkamar;
+		$this->MSudi->AddData('tbl_payment',$add1);
 		redirect(site_url('Welcome/DataKamarHotel'));
 	}
 	public function UpdateDataKamarHotel()
@@ -2509,6 +2680,8 @@ class Welcome extends CI_Controller
 		}
 		
 		$id_kamar = $this->input->post('id_kamar');
+			
+		$id_payment = $this->input->post('id_payment');
 		$update['id_hotel'] = $this->input->post('id_hotel');
 		$update['nama_kamar'] = $this->input->post('nama_kamar');
 		$update['jumlah_kamar'] = $this->input->post('jumlah_kamar');
@@ -2519,6 +2692,18 @@ class Welcome extends CI_Controller
 		$update['updated_date'] = date("Y-m-d H:i:s");
 	
 		$update['is_active'] = 1;
+
+		$update1['id_kamar_hotel'] = $this->input->post('id_kamar_hotel1');
+		$update1['price'] = $this->input->post('price');
+		$update1['custom_price'] = $this->input->post('custom_price');
+		$update1['currency'] = $this->input->post('currency');
+	
+		$update1['updated_by'] = $data['nama'];
+		$update1['updated_date'] =  date("Y-m-d H:i:s");
+		
+		$update1['is_active'] = 1;
+
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -2561,6 +2746,7 @@ class Welcome extends CI_Controller
 
 
 		$this->MSudi->UpdateData('tbl_kamar_hotel', 'id_kamar', $id_kamar, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
 		redirect(site_url('Welcome/DataKamarHotel'));
 	}
 	public function DeleteDataKamarHotel()
@@ -2572,7 +2758,12 @@ class Welcome extends CI_Controller
 		$update['is_active'] = 0;
 		$update['deleted_by'] = $data['nama'];
 		$update['deleted_date'] = date("Y-m-d H:i:s"); 
+
+		$update1['is_active'] = 0;
+		$update1['deleted_by'] = $data['nama'];
+		$update1['deleted_date'] = date("Y-m-d H:i:s"); 
 		
+		$this->MSudi->UpdateData('tbl_payment', 'id_kamar_hotel', $id_kamar, $update1);
 		$this->MSudi->UpdateData('tbl_kamar_hotel', 'id_kamar', $id_kamar, $update);
 		redirect(site_url('Welcome/DataKamarHotel'));
 	}

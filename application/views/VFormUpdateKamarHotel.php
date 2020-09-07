@@ -104,7 +104,23 @@
 					<input type="file" name="userfile"><br> -->
 					<input type="hidden" name="updated_by" class="form-control"  required>
 					<input type="hidden" name="updated_date" class="form-control"  required>
-					
+				
+				
+					<div class="form-group">
+					<label>Price</label>
+					<input type="number" name="price" class="form-control" value="<?php echo $detail['price']; ?>" required>
+				</div>
+				<div class="form-group">
+					<label>Custom Price</label>
+					<input type="hidden" name="id_payment" class="form-control"   value="<?php echo $detail['id_payment']; ?>"required >
+					<input type="number" name="custom_price" class="form-control" value="<?php echo $detail['custom_price']; ?>" required>
+                </div>
+				<div class="form-group">
+					<label>Currency</label>
+					<input type="text" name="currency" class="form-control" value="<?php echo $detail['currency']; ?>" required>
+				</div>
+				<input type="hidden" name="id_kamar_hotel1" class="form-control"  value="<?php echo $detail['id_kamar']; ?>">
+				
         <div class="form-group">
 		<label>Foto Sebelumnya</label><br>
 				<div class="form-group">

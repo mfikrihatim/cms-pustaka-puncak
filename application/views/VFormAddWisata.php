@@ -75,7 +75,21 @@
                     <textarea id="editor1" name="keterangan_wisata" rows="10" cols="80">
                                             
 					</textarea>
+				</div>
+				<div class="form-group">
+					<label>Price</label>
+					<input type="number" name="price" class="form-control" placeholder="Masukan Price" required>
+				</div>
+				<div class="form-group">
+					<label>Custom Price</label>
+					<input type="number" name="custom_price" class="form-control" placeholder="Masukan Custom Price" required>
                 </div>
+				<div class="form-group">
+					<label>Currency</label>
+					<input type="text" name="currency" class="form-control" placeholder="Masukan Currency" required>
+				</div>
+				<input type="hidden" name="id_wisata1" class="form-control">
+
                 <input type="hidden" name="created_by" class="form-control"  required>
                     <input type="hidden" name="created_date" class="form-control"  required>
 					<div class="form-group">

@@ -94,6 +94,21 @@
 					<label>durasi Camp</label>
 					<input type="text" name="durasi_camp" class="form-control" value="<?php echo $detail['durasi_camp']; ?>" required>
                 </div>
+				<div class="form-group">
+					<label>Price</label>
+					<input type="number" name="price" class="form-control" value="<?php echo $detail['price']; ?>" required>
+				</div>
+				<div class="form-group">
+					<label>Custom Price</label>
+					<input type="hidden" name="id_payment" class="form-control"   value="<?php echo $detail['id_payment']; ?>"required >
+					<input type="number" name="custom_price" class="form-control" value="<?php echo $detail['custom_price']; ?>" required>
+                </div>
+				<div class="form-group">
+					<label>Currency</label>
+					<input type="text" name="currency" class="form-control" value="<?php echo $detail['currency']; ?>" required>
+				</div>
+				<input type="hidden" name="id_camp1" class="form-control"  value="<?php echo $detail['id_camp']; ?>">
+				
                 <div class="box-body pad">
               		<label>Keterangan Camp</label>
                     <textarea id="editor1" name="keterangan_camp" rows="10" cols="80">

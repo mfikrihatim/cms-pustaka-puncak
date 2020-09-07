@@ -77,6 +77,21 @@
                                             
 					</textarea>
 				</div>
+
+				<div class="form-group">
+					<label>Price</label>
+					<input type="number" name="price" class="form-control" placeholder="Masukan Price" required>
+				</div>
+				<div class="form-group">
+					<label>Custom Price</label>
+					<input type="number" name="custom_price" class="form-control" placeholder="Masukan Custom Price" required>
+                </div>
+				<div class="form-group">
+					<label>Currency</label>
+					<input type="text" name="currency" class="form-control" placeholder="Masukan Currency" required>
+				</div>
+				<input type="hidden" name="id_hotel1" class="form-control">
+				
 					<!-- <label>Upload Image</label>
 					<input type="file" name="userfile"><br> -->
 					<input type="hidden" name="created_by" class="form-control"  required>

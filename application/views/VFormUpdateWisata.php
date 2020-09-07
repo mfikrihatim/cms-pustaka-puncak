@@ -100,7 +100,21 @@
                     <?php echo $detail['keterangan_wisata']; ?>                   
 					</textarea>
                 </div>
-               
+                <div class="form-group">
+					<label>Price</label>
+					<input type="number" name="price" class="form-control" value="<?php echo $detail['price']; ?>" required>
+				</div>
+				<div class="form-group">
+					<label>Custom Price</label>
+					<input type="hidden" name="id_payment" class="form-control"   value="<?php echo $detail['id_payment']; ?>"required >
+					<input type="number" name="custom_price" class="form-control" value="<?php echo $detail['custom_price']; ?>" required>
+                </div>
+				<div class="form-group">
+					<label>Currency</label>
+					<input type="text" name="currency" class="form-control" value="<?php echo $detail['currency']; ?>" required>
+				</div>
+				<input type="hidden" name="id_wisata1" class="form-control"  value="<?php echo $detail['id_wisata']; ?>">
+				
 				<div class="form-group">
 		<label>Foto Sebelumnya</label><br>
 				<div class="form-group">

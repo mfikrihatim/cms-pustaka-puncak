@@ -6,10 +6,12 @@ class MSudi extends CI_Model
     function AddData($tabel, $data=array())
     {
         $this->db->insert($tabel,$data);
+        $last_id = $this->db->insert_id();
+        return $last_id;
     }
     function AddData1($tabel1,$tabel2,$data1=array(),$data2=array())
     {
-        $this->db->insert($tabel1,$data1);
+        $this->db->insert($tabel1,$data1); 
         $this->db->insert($tabel2,$data2);
     }
 

@@ -78,18 +78,54 @@
 					<input type="hidden" name="created_by" class="form-control"  required>
 					<input type="hidden" name="created_date" class="form-control"  required>
 					
+					<div class="form-group">
+					<label>Price</label>
+					<input type="number" name="price" class="form-control" placeholder="Masukan Price" required>
+				</div>
+				<div class="form-group">
+					<label>Custom Price</label>
+					<input type="number" name="custom_price" class="form-control" placeholder="Masukan Custom Price" required>
+                </div>
+				<div class="form-group">
+					<label>Currency</label>
+					<input type="text" name="currency" class="form-control" placeholder="Masukan Currency" required>
+				</div>
+				<input type="hidden" name="id_kamar_hotel1" class="form-control">
+				<!-- <div class="form-group">
+          <label>Tahun Ajaran</label>
+          <select class="form-control" name="availability_year" required>
+            <option selected disabled>Pilih Tahun</option>
+            <?php
+              for($i = 2020; $i <= 2030; $i++){
+            ?>
+            <option><?php echo $a = $i+1; ?></option>
+            <?php
+              }
+            ?>
+                  </select>
+                </div>
+                <div class="form-group">
+					<label>Availability Month</label>
+					<input type="date" name="availability_month" class="form-control" required>
+                </div>
+                <div class="form-group">
+					<label>Availability date</label>
+					<input type="date" name="availability_date" class="form-control" required>
+				</div>
+				<input type="hidden" name="id_availability1" class="form-control"> -->
            <div class="form-group">
                   <label for="exampleInputFile">Masukan Foto Kamar</label>
                   <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
-                </div>
+				</div>
+				<br>
                 <!-- <div class="form-group">
                   <label for="exampleInputFile">Masukan Foto Profile Kamar</label>
                   <input type="file" name="file"/>
-                  <p class="help-block">Example block-level help text here.</p>
-                </div> -->
+                  <!-- <p class="help-block">Example block-level help text here.</p> -->
+                <!-- </div>  -->
 				<input type="hidden" name="is_active" class="form-control" value="1">
-                <!-- </div> -->
+                </div>
 			</div>
 			<input type="submit" name="btn_simpan" value="Simpan">
 		</form>

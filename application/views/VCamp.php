@@ -62,12 +62,15 @@
                                     <td >
                   <?php 
 				
-				foreach($fotos as $foto){
+                if ($fotos != Null) {
+                    foreach($fotos as $foto){
+                          
 				?>
 				
         <img width="50px" height="50px" src="<?php echo $foto; ?>">
 				<?php 
-				}
+                }
+            }
 				?> 
                   </td>      
                    <td><?php echo $ReadDS->price; ?></td>
