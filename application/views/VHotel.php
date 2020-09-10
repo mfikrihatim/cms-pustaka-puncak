@@ -32,6 +32,7 @@
               <th>Rating</th>
               <th>Keterangan Hotel</th>
               <th>Foto Hotel</th>
+              <th>Foto Profile Hotel</th>
               <th>Created By</th>
               <th>Created Date</th>
               <th>Update By</th>
@@ -71,6 +72,7 @@
       }
 				?> 
                   </td> 
+                  <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_profile_hotel; ?>"></td>
                   <td><?php echo $ReadDS->created_by; ?></td>
                   <td><?php echo $ReadDS->created_date; ?></td>
                   <td><?php echo $ReadDS->updated_by; ?></td>

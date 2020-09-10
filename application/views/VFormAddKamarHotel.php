@@ -91,39 +91,27 @@
 					<input type="text" name="currency" class="form-control" placeholder="Masukan Currency" required>
 				</div>
 				<input type="hidden" name="id_kamar_hotel1" class="form-control">
-				<!-- <div class="form-group">
-          <label>Tahun Ajaran</label>
-          <select class="form-control" name="availability_year" required>
-            <option selected disabled>Pilih Tahun</option>
-            <?php
-              for($i = 2020; $i <= 2030; $i++){
-            ?>
-            <option><?php echo $a = $i+1; ?></option>
-            <?php
-              }
-            ?>
-                  </select>
+
+                <div class="form-group">
+					<label>Start Date</label>
+					<input type="date" name="start" class="form-control" required>
                 </div>
                 <div class="form-group">
-					<label>Availability Month</label>
-					<input type="date" name="availability_month" class="form-control" required>
-                </div>
-                <div class="form-group">
-					<label>Availability date</label>
-					<input type="date" name="availability_date" class="form-control" required>
+					<label>End Date</label>
+					<input type="date" name="end" class="form-control" required>
 				</div>
-				<input type="hidden" name="id_availability1" class="form-control"> -->
+				<input type="hidden" name="id_availability1" class="form-control">
            <div class="form-group">
                   <label for="exampleInputFile">Masukan Foto Kamar</label>
                   <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
 				</div>
 				<br>
-                <!-- <div class="form-group">
+                <div class="form-group">
                   <label for="exampleInputFile">Masukan Foto Profile Kamar</label>
-                  <input type="file" name="file"/>
-                  <!-- <p class="help-block">Example block-level help text here.</p> -->
-                <!-- </div>  -->
+                  <input type="file" name="fileprofile"/>
+                
+                </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">
                 </div>
 			</div>

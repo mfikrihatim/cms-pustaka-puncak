@@ -159,7 +159,17 @@
 				</div>
 				<input type="hidden" name="id_exp1" class="form-control"  value="<?php echo $detail['id_exp']; ?>">
 				
-                
+                <div class="form-group">
+					<label>Start Date</label>
+					<input type="date" name="start" class="form-control" value="<?php echo $detail['start']; ?>" required>
+                </div>
+                <div class="form-group">
+					<label>End Date</label>
+					<input type="date" name="end" class="form-control" value="<?php echo $detail['end']; ?>" required>
+				</div>
+				<input type="hidden" name="id_availability" class="form-control value="<?php echo $detail['id_availability']; ?>">
+         
+
                
                 <input type="hidden" name="updated_by" class="form-control"  required>
                     <input type="hidden" name="updated_date" class="form-control"  required>
@@ -178,6 +188,15 @@
 				?>
                   <label for="exampleInputFile">File input</label>
                   <input type="file" name="file[]" multiple="multiple"/>
+                  <!-- <p class="help-block">Example block-level help text here.</p> -->
+                </div>
+
+				<div class="form-group">
+                <img src="<?php  echo $detail['foto_profile_experience'];  ?>" width="200px" height="200px" style="border-radius: 100%;"><br>
+
+                
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" name="fileprofile"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
                 </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">

@@ -38,6 +38,7 @@
                             <th>ID Minimum Booking</th>
                             <th>ID Merchant</th>
                             <th>Foto Experience</th>
+                            <th>Foto Profile Experience</th>
                             <th>Creted BY</th>
                             <th>Creted Date</th>
                             <th>Updated BY</th>
@@ -81,6 +82,8 @@
 				}
 				?> 
                   </td>     
+                  <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_profile_experience; ?>"></td>        
+                 
                                     <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>
                                     <td><?php echo $ReadDS->updated_by; ?></td>

@@ -32,7 +32,9 @@
                             <th>Rating</th>
                             <th>Keterangan Camp</th>
                             <th>Foto Camp</th>
+                            <th>Foto Profile Camp</th>
                             <th>Price</th>
+                            
                             <th>Creted BY</th>
                             <th>Creted Date</th>
                             <th>Updated BY</th>
@@ -73,7 +75,9 @@
             }
 				?> 
                   </td>      
+                  <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_profile_camp; ?>"></td>
                    <td><?php echo $ReadDS->price; ?></td>
+                 
                                     <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>
                                     <td><?php echo $ReadDS->updated_by; ?></td>

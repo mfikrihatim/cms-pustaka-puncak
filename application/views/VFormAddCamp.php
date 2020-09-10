@@ -82,11 +82,19 @@
 				</div>
 				<div class="form-group">
 					<label>Custom Price</label>
-					<input type="number" name="custom_price" class="form-control" placeholder="Masukan Custom Price" required>
+					<input type="number" name="custom_price" class="form-control" placeholder="Masukan Custom Price">
                 </div>
 				<div class="form-group">
 					<label>Currency</label>
 					<input type="text" name="currency" class="form-control" placeholder="Masukan Currency" required>
+				</div>
+				<div class="form-group">
+					<label>Start Date</label>
+					<input type="date" name="start" class="form-control" required>
+                </div>
+                <div class="form-group">
+					<label>End Date</label>
+					<input type="date" name="end" class="form-control" required>
 				</div>
 				<input type="hidden" name="id_camp1" class="form-control">
 				
@@ -96,6 +104,12 @@
                   <label for="exampleInputFile">File input</label>
                   <input type="file" name="file[]" multiple="multiple"/>
                   <!-- <p class="help-block">Example block-level help text here.</p> -->
+				</div>
+				<br>
+                <div class="form-group">
+                  <label for="exampleInputFile">Masukan Foto Profile Camp</label>
+                  <input type="file" name="fileprofile"/>
+                
                 </div>
 				<input type="hidden" name="is_active" class="form-control" value="1">
 				

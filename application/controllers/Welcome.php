@@ -860,6 +860,7 @@ class Welcome extends CI_Controller
 			$id_hotel = $this->uri->segment(3);
 			$tampil = $this->MSudi->GetDataWhere('tbl_hotel', 'id_hotel', $id_hotel)->row();
 			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_hotel', $id_hotel)->row();
+			$tampil2 = $this->MSudi->GetDataWhere('tbl_availability', 'id_hotel', $id_hotel)->row();
 			$data['id_merchant'] = $this->MSudi->GetData('tbl_merchant');
 			$data['nama_merchant'] = $this->MSudi->GetData('tbl_merchant');
 			$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
@@ -877,6 +878,7 @@ class Welcome extends CI_Controller
 			$data['detail']['keterangan_hotels'] = $tampil->keterangan_hotels;
 			$arrayfotohotel = json_decode($tampil->foto_hotel, TRUE);
 			$data['detail']['foto_hotel'] = $arrayfotohotel;
+			$data['detail']['foto_profile_hotel'] = $tampil->foto_profile_hotel;
 			$data['detail']['price'] = $tampil1->price;
 			$data['detail']['id_payment'] = $tampil1->id_payment;
 			$data['detail']['custom_price'] = $tampil1->custom_price;
@@ -888,6 +890,14 @@ class Welcome extends CI_Controller
 			$data['detail']['deleted_by'] = $tampil->deleted_by;
 			$data['detail']['deleted_date'] = $tampil->deleted_date;
 			$data['detail']['is_active'] = $tampil->is_active;
+
+			$data['detail']['id_availability'] = $tampil2->id_availability;
+			$arraydate = json_decode($tampil2->availability_date, TRUE);
+			$start = $arraydate[0];
+			$end= end ($arraydate);
+			$data['detail']['start'] = $start;
+			$data['detail']['end'] = $end;
+			$data['detail']['availability_date'] = $arraydate;
 			$data['content'] = 'VFormUpdateHotel';
 		} else {
 			$data['DataHotel'] = $this->MSudi->GetDataWhere1('tbl_hotel', 'is_active', 1, 'id_hotel','asc')->result();
@@ -1208,6 +1218,26 @@ class Welcome extends CI_Controller
 		$add1['deleted_date'] = null;
 		$add1['is_active'] = 1;
 
+		$expAvailibility = [];
+
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+		
+		// $add2['id_availability'] = $this->input->post('id_availability');
+		$add2['availability_year'] = null;
+		$add2['availability_month'] = null;
+		$add2['availability_date'] = json_encode($expAvailibility); 
+		$add2['is_active'] = 1;
+	
 
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
@@ -1230,12 +1260,31 @@ class Welcome extends CI_Controller
 			$replcate = str_replace("\/", "/", $image);
 			$add['foto_hotel'] = $replcate;
 		}
+	
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_profile_hotel'] = isset($imagePath) ? strval($imagePath) : '#';
 
 
 
 		$idhotel = $this->MSudi->AddData('tbl_hotel',$add);
 		$add1['id_hotel']=$idhotel;
+		$add2['id_hotel']=$idhotel;
 		$this->MSudi->AddData('tbl_payment',$add1);
+		$this->MSudi->AddData('tbl_availability',$add2);
 		redirect(site_url('Welcome/DataHotel'));
 	}
 	public function UpdateDataHotel()
@@ -1253,6 +1302,7 @@ class Welcome extends CI_Controller
 		
 		$id_hotel = $this->input->post('id_hotel');
 		$id_payment = $this->input->post('id_payment');
+		$id_availability = $this->input->post('id_availability');
 		$update['id_merchant'] = $this->input->post('id_merchant');
 		$update['nama_hotel'] = $this->input->post('nama_hotel');
 		$update['alamat_hotel'] = $this->input->post('alamat_hotel');
@@ -1275,6 +1325,23 @@ class Welcome extends CI_Controller
 	
 		$update1['is_active'] = 1;
 
+		$expAvailibility = [];
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+
+		$update2['availability_year'] = null;
+		$update2['availability_month'] = null;
+		$update2['availability_date'] = json_encode($expAvailibility); 
+		$update2['is_active'] = 1;
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1296,11 +1363,29 @@ class Welcome extends CI_Controller
 			$replcate = str_replace("\/", "/", $image);
 			$update['foto_hotel'] = $replcate;
 		}
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_profile_hotel'] = isset($imagePath) ? strval($imagePath) : '#';
 
+				
 
 
 		$this->MSudi->UpdateData('tbl_hotel', 'id_hotel', $id_hotel, $update);
 		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_hotel', $id_hotel, $update2);
 		redirect(site_url('Welcome/DataHotel'));
 	}
 	public function DeleteDataHotel()
@@ -1317,9 +1402,10 @@ class Welcome extends CI_Controller
 		$update1['deleted_by'] = $data['nama'] ;
 		$update1['deleted_date'] =  date("Y-m-d H:i:s");
 
-		
+		$update2['is_active'] = 0;
 		$this->MSudi->UpdateData('tbl_payment', 'id_hotel', $id_hotel, $update1);
 		$this->MSudi->UpdateData('tbl_hotel', 'id_hotel', $id_hotel, $update);
+		$this->MSudi->UpdateData('tbl_availability', 'id_hotel', $id_hotel, $update2);
 		redirect(site_url('Welcome/DataHotel'));
 	}
 
@@ -1675,6 +1761,7 @@ class Welcome extends CI_Controller
 	
 			$tampil = $this->MSudi->GetDataWhere('tbl_camp', 'id_camp', $id_camp)->row();
 			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_camp', $id_camp)->row();
+			$tampil2 = $this->MSudi->GetDataWhere('tbl_availability', 'id_camp', $id_camp)->row();
 			$data['detail']['id_camp'] = $tampil->id_camp;
 			$data['detail']['id_merchant'] = $tampil->id_merchant;
 			$data['detail']['nama_camp'] = $tampil->nama_camp;
@@ -1688,8 +1775,9 @@ class Welcome extends CI_Controller
 			$data['detail']['keterangan_camp'] = $tampil->keterangan_camp;
 			$arrayfotocamp = json_decode($tampil->foto_camp, TRUE);
 			$data['detail']['foto_camp'] = $arrayfotocamp;
+			$data['detail']['foto_profile_camp'] = $tampil->foto_profile_camp;
 			$data['detail']['price'] = $tampil->price;
-			$data['detail']['price'] = $tampil1->price;
+			$data['detail']['custprice'] = $tampil1->price;
 			$data['detail']['id_payment'] = $tampil1->id_payment;
 			$data['detail']['custom_price'] = $tampil1->custom_price;
 			$data['detail']['currency'] = $tampil1->currency;
@@ -1700,6 +1788,15 @@ class Welcome extends CI_Controller
 			$data['detail']['deleted_by'] = $tampil->deleted_by;
 			$data['detail']['deleted_date'] = $tampil->deleted_date;
 			$data['detail']['is_active'] = $tampil->is_active;
+
+			$data['detail']['id_availability'] = $tampil2->id_availability;
+			$arraydate = json_decode($tampil2->availability_date, TRUE);
+			$start = $arraydate[0];
+			$end= end ($arraydate);
+			$data['detail']['start'] = $start;
+			$data['detail']['end'] = $end;
+			$data['detail']['availability_date'] = $arraydate;
+
 			$data['content'] = 'VFormUpdateCamp';
 		} else {
 			$data['DataCamp'] = $this->MSudi->GetDataWhere1('tbl_camp', 'is_active', 1, 'id_camp','asc')->result();
@@ -1767,7 +1864,26 @@ class Welcome extends CI_Controller
 		$add1['deleted_date'] = null;
 		$add1['is_active'] = 1;
 
+		$expAvailibility = [];
 
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+		
+		// $add2['id_availability'] = $this->input->post('id_availability');
+		$add2['availability_year'] = null;
+		$add2['availability_month'] = null;
+		$add2['availability_date'] = json_encode($expAvailibility); 
+		$add2['is_active'] = 1;
+	
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1790,9 +1906,28 @@ class Welcome extends CI_Controller
 			$add['foto_camp'] = $replcate;
 
 		}	
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_profile_camp'] = isset($imagePath) ? strval($imagePath) : '#';
+
 		$idcamp = $this->MSudi->AddData('tbl_camp',$add);
 		$add1['id_camp']=$idcamp;
+		$add2['id_camp']=$idcamp;
 		$this->MSudi->AddData('tbl_payment',$add1);
+		$this->MSudi->AddData('tbl_availability',$add2);
 		redirect(site_url('Welcome/DataCamp'));
 	}
 	public function UpdateDataCamp()
@@ -1810,7 +1945,7 @@ class Welcome extends CI_Controller
 
 		$id_camp = $this->input->post('id_camp');
 		$id_payment = $this->input->post('id_payment');
-		
+		$id_availability = $this->input->post('id_availability');
 		$update['id_merchant'] = $this->input->post('id_merchant');
 		$update['nama_camp'] = $this->input->post('nama_camp');
 		$update['alamat_camp'] = $this->input->post('alamat_camp');
@@ -1833,6 +1968,23 @@ class Welcome extends CI_Controller
 		$update1['updated_date'] = date("Y-m-d H:i:s");
 		$update1['is_active'] = 1;
 
+		$expAvailibility = [];
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+
+		$update2['availability_year'] = null;
+		$update2['availability_month'] = null;
+		$update2['availability_date'] = json_encode($expAvailibility); 
+		$update2['is_active'] = 1;
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -1855,9 +2007,27 @@ class Welcome extends CI_Controller
 			$update['foto_camp'] = $replcate;
 		}
 	
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_profile_camp'] = isset($imagePath) ? strval($imagePath) : '#';
 		
+
 		$this->MSudi->UpdateData('tbl_camp', 'id_camp', $id_camp, $update);
 		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_camp', $id_camp, $update2);
 		redirect(site_url('Welcome/DataCamp'));
 	}
 	public function DeleteDataCamp()
@@ -1873,9 +2043,12 @@ class Welcome extends CI_Controller
 		$update1['is_active'] = 0;
 		$update1['deleted_by'] = $data['nama'] ;
 		$update1['deleted_date'] =  date("Y-m-d H:i:s");
+		
+		$update2['is_active'] = 0;
 
 		$this->MSudi->UpdateData('tbl_camp', 'id_camp', $id_camp, $update);
 		$this->MSudi->UpdateData('tbl_payment', 'id_camp', $id_camp, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_camp', $id_camp, $update2);
 		redirect(site_url('Welcome/DataCamp'));
 	}
 
@@ -1896,6 +2069,7 @@ class Welcome extends CI_Controller
 	
 			$tampil = $this->MSudi->GetDataWhere('tbl_wisata', 'id_wisata', $id_wisata)->row();
 			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_wisata', $id_wisata)->row();
+			$tampil2 = $this->MSudi->GetDataWhere('tbl_availability', 'id_wisata', $id_wisata)->row();
 			$data['detail']['id_wisata'] = $tampil->id_wisata;
 			$data['detail']['id_merchant'] = $tampil->id_merchant;
 			$data['detail']['nama_wisata'] = $tampil->nama_wisata;
@@ -1909,6 +2083,7 @@ class Welcome extends CI_Controller
 			$data['detail']['keterangan_wisata'] = $tampil->keterangan_wisata;
 			$arrayfotowisata = json_decode($tampil->foto_wisata, TRUE);
 			$data['detail']['foto_wisata'] = $arrayfotowisata;
+			$data['detail']['foto_profile_wisata'] = $tampil->foto_profile_wisata;
 			$data['detail']['price'] = $tampil->price;
 			$data['detail']['price'] = $tampil1->price;
 			$data['detail']['id_payment'] = $tampil1->id_payment;
@@ -1921,6 +2096,14 @@ class Welcome extends CI_Controller
 			$data['detail']['deleted_by'] = $tampil->deleted_by;
 			$data['detail']['deleted_date'] = $tampil->deleted_date;
 			$data['detail']['is_active'] = $tampil->is_active;
+			$data['detail']['id_availability'] = $tampil2->id_availability;
+			$arraydate = json_decode($tampil2->availability_date, TRUE);
+			$start = $arraydate[0];
+			$end= end ($arraydate);
+			$data['detail']['start'] = $start;
+			$data['detail']['end'] = $end;
+			$data['detail']['availability_date'] = $arraydate;
+
 			$data['content'] = 'VFormUpdateWisata';
 		} else {
 			$data['DataWisata'] = $this->MSudi->GetDataWhere1('tbl_wisata', 'is_active', 1, 'id_wisata','asc')->result();
@@ -1986,6 +2169,25 @@ class Welcome extends CI_Controller
 		$add1['deleted_by'] = null;
 		$add1['deleted_date'] = null;
 		$add1['is_active'] = 1;
+		$expAvailibility = [];
+
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+		
+		// $add2['id_availability'] = $this->input->post('id_availability');
+		$add2['availability_year'] = null;
+		$add2['availability_month'] = null;
+		$add2['availability_date'] = json_encode($expAvailibility); 
+		$add2['is_active'] = 1;
 
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
@@ -2009,9 +2211,29 @@ class Welcome extends CI_Controller
 			$add['foto_wisata'] = $replcate;
 
 		}	
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_profile_wisata'] = isset($imagePath) ? strval($imagePath) : '#';
+
+
 		$idwisata = $this->MSudi->AddData('tbl_wisata',$add);
 		$add1['id_wisata']=$idwisata;
+		$add2['id_wisata']=$idwisata;
 		$this->MSudi->AddData('tbl_payment',$add1);
+		$this->MSudi->AddData('tbl_availability',$add2);
 		redirect(site_url('Welcome/DataWisata'));
 	}
 	public function UpdateDataWisata()
@@ -2029,7 +2251,7 @@ class Welcome extends CI_Controller
 
 		$id_wisata = $this->input->post('id_wisata');
 		$id_payment = $this->input->post('id_payment');
-		
+		$id_availability = $this->input->post('id_availability');
 		$update['id_merchant'] = $this->input->post('id_merchant');
 		$update['nama_wisata'] = $this->input->post('nama_wisata');
 		$update['alamat_wisata'] = $this->input->post('alamat_wisata');
@@ -2053,6 +2275,24 @@ class Welcome extends CI_Controller
 		
 		$update1['is_active'] = 1;
 
+		$expAvailibility = [];
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+
+		$update2['availability_year'] = null;
+		$update2['availability_month'] = null;
+		$update2['availability_date'] = json_encode($expAvailibility); 
+		$update2['is_active'] = 1;
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -2075,9 +2315,27 @@ class Welcome extends CI_Controller
 			$update['foto_wisata'] = $replcate;
 
 		}	
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_profile_wisata'] = isset($imagePath) ? strval($imagePath) : '#';
+
 		
 		$this->MSudi->UpdateData('tbl_wisata', 'id_wisata', $id_wisata, $update);
 		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_wisata', $id_wisata, $update2);
 		redirect(site_url('Welcome/DataWisata'));
 	}
 	public function DeleteDataWisata()
@@ -2092,8 +2350,10 @@ class Welcome extends CI_Controller
 		$update1['is_active'] = 0;
 		$update1['deleted_by'] = $data['nama'] ;
 		$update1['deleted_date'] =  date("Y-m-d H:i:s");
+		$update1['is_active'] = 0;
 		$this->MSudi->UpdateData('tbl_wisata', 'id_wisata', $id_wisata, $update);
 		$this->MSudi->UpdateData('tbl_payment', 'id_wisata', $id_wisata, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_wisata', $id_wisata, $update2);
 		redirect(site_url('Welcome/DataWisata'));
 	}
 
@@ -2174,6 +2434,8 @@ class Welcome extends CI_Controller
 			$id_exp = $this->uri->segment(3);
 			$tampil = $this->MSudi->GetDataWhere('tbl_experience', 'id_exp', $id_exp)->row();
 			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_exp', $id_exp)->row();
+			$tampil2 = $this->MSudi->GetDataWhere('tbl_availability', 'id_exp', $id_exp)->row();
+		
 			$data['detail']['id_exp'] = $tampil->id_exp;
 			$data['detail']['judul_exp'] = $tampil->judul_exp;
 			$data['detail']['id_tipe_exp'] = $tampil->id_tipe_exp;
@@ -2193,6 +2455,7 @@ class Welcome extends CI_Controller
 			$data['detail']['id_merchant'] = $tampil->id_merchant;
 			$arrayfotoexperience = json_decode($tampil->foto_experience, TRUE);
 			$data['detail']['foto_experience'] = $arrayfotoexperience;
+			$data['detail']['foto_profile_experience'] = $tampil->foto_profile_experience;
 			$data['detail']['price'] = $tampil1->price;
 			$data['detail']['id_payment'] = $tampil1->id_payment;
 			$data['detail']['custom_price'] = $tampil1->custom_price;
@@ -2204,6 +2467,13 @@ class Welcome extends CI_Controller
 			$data['detail']['deleted_by'] = $tampil->deleted_by;
 			$data['detail']['deleted_date'] = $tampil->deleted_date;
 			$data['detail']['is_active'] = $tampil->is_active;
+			$data['detail']['id_availability'] = $tampil2->id_availability;
+			$arraydate = json_decode($tampil2->availability_date, TRUE);
+			$start = $arraydate[0];
+			$end= end ($arraydate);
+			$data['detail']['start'] = $start;
+			$data['detail']['end'] = $end;
+			$data['detail']['availability_date'] = $arraydate;
 			$data['content'] = 'VFormUpdateExperience';
 		} else {
 			$data['DataExperience'] = $this->MSudi->GetDataWhere1('tbl_experience', 'is_active', 1, 'id_exp','asc')->result();
@@ -2273,6 +2543,29 @@ class Welcome extends CI_Controller
 		$add1['deleted_by'] = null;
 		$add1['deleted_date'] = null;
 		$add1['is_active'] = 1;
+
+		$expAvailibility = [];
+
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+		
+		// $add2['id_availability'] = $this->input->post('id_availability');
+		$add2['availability_year'] = null;
+		$add2['availability_month'] = null;
+		$add2['availability_date'] = json_encode($expAvailibility); 
+		$add2['is_active'] = 1;
+	
+
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -2295,11 +2588,32 @@ class Welcome extends CI_Controller
 			$add['foto_experience'] = $replcate;
 
 		}	
+
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$add['foto_profile_experience'] = isset($imagePath) ? strval($imagePath) : '#';
+
+
 		$add['is_active'] = 1;
 				
 		$idexp = $this->MSudi->AddData('tbl_experience',$add);
 		$add1['id_exp']=$idexp;
+		$add2['id_exp']=$idexp;
 		$this->MSudi->AddData('tbl_payment',$add1);
+		$this->MSudi->AddData('tbl_availability',$add2);
 		redirect(site_url('Welcome/DataExperience'));
 	}
 	public function UpdateDataExperience()
@@ -2316,7 +2630,7 @@ class Welcome extends CI_Controller
 		$id_exp = $this->input->post('id_exp');
 		
 		$id_payment = $this->input->post('id_payment');
-		
+		$id_availability = $this->input->post('id_availability');
 		$update['judul_exp'] = $this->input->post('judul_exp');
 		$update['id_tipe_exp'] = $this->input->post('id_tipe_exp');
 		$update['tipe_trip_exp'] = $this->input->post('tipe_trip_exp');
@@ -2346,6 +2660,25 @@ class Welcome extends CI_Controller
 	
 		$update1['is_active'] = 1;
 
+		$expAvailibility = [];
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+
+		$update2['availability_year'] = null;
+		$update2['availability_month'] = null;
+		$update2['availability_date'] = json_encode($expAvailibility); 
+		$update2['is_active'] = 1;
+	
+
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
 		if($file_collections !== ''){
@@ -2369,10 +2702,28 @@ class Welcome extends CI_Controller
 
 		}	
 	
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
+            if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
+            $unique_file = uniqid() . '.jpeg';
+            $fileprofile['name'] =  $unique_file;
+            }elseif($media_type == 'video/mp4'){
+            $unique_file = uniqid() . '.mp4';
+            $fileprofile['name'] =  $unique_file;
+            }
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
+        //     if (!$file && is_wp_error($imagePath)) {
+        //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
+        // }
+		}
+		$update['foto_profile_experience'] = isset($imagePath) ? strval($imagePath) : '#';
+
 				
 		
 		$this->MSudi->UpdateData('tbl_experience', 'id_exp', $id_exp, $update);
 		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_exp', $id_exp, $update2);
 		redirect(site_url('Welcome/DataExperience'));
 	}
 	public function DeleteDataExperience()
@@ -2388,10 +2739,11 @@ class Welcome extends CI_Controller
 		$update1['is_active'] = 0;
 		$update1['deleted_by'] = $data['nama'] ;
 		$update1['deleted_date'] =  date("Y-m-d H:i:s");
-
-		
-		$this->MSudi->UpdateData('tbl_payment', 'id_exp', $id_exp, $update1);
+	
+		$update2['is_active'] = 0;
 		$this->MSudi->UpdateData('tbl_experience', 'id_exp', $id_exp, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_exp', $id_exp, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_exp', $id_exp, $update2);
 		redirect(site_url('Welcome/DataExperience'));
 	}
 
@@ -2533,6 +2885,7 @@ class Welcome extends CI_Controller
 			$id_kamar = $this->uri->segment(3);
 			$tampil = $this->MSudi->GetDataWhere('tbl_kamar_hotel', 'id_kamar', $id_kamar)->row();
 			$tampil1 = $this->MSudi->GetDataWhere('tbl_payment', 'id_kamar_hotel', $id_kamar)->row();
+			$tampil2 = $this->MSudi->GetDataWhere('tbl_availability', 'id_kamar_hotel', $id_kamar)->row();
 			$data['id_hotel'] = $this->MSudi->GetData('tbl_hotel');
 			$data['id_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
 			$data['nama_fasilitas'] = $this->MSudi->GetData('tbl_fasilitas');
@@ -2559,6 +2912,13 @@ class Welcome extends CI_Controller
 			$data['detail']['deleted_by'] = $tampil->deleted_by;
 			$data['detail']['deleted_date'] = $tampil->deleted_date;
 			$data['detail']['is_active'] = $tampil->is_active;
+			$data['detail']['id_availability'] = $tampil2->id_availability;
+			$arraydate = json_decode($tampil2->availability_date, TRUE);
+			$start = $arraydate[0];
+			$end= end ($arraydate);
+			$data['detail']['start'] = $start;
+			$data['detail']['end'] = $end;
+			$data['detail']['availability_date'] = $arraydate;
 			$data['content'] = 'VFormUpdateKamarHotel';
 		} else {
 			$data['DataKamarHotel'] = $this->MSudi->GetDataWhere1('tbl_kamar_hotel', 'is_active', 1, 'id_kamar','asc')->result();
@@ -2619,7 +2979,26 @@ class Welcome extends CI_Controller
 		$add1['deleted_by'] = null;
 		$add1['deleted_date'] = null;
 		$add1['is_active'] = 1;
+		$expAvailibility = [];
 
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
+
+		
+		// $add2['id_availability'] = $this->input->post('id_availability');
+		$add2['availability_year'] = null;
+		$add2['availability_month'] = null;
+		$add2['availability_date'] = json_encode($expAvailibility); 
+		$add2['id_hotel']	=	$add['id_hotel']; 
+		$add2['is_active'] = 1;
 	
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
@@ -2643,26 +3022,28 @@ class Welcome extends CI_Controller
 			$add['foto_kamar'] = $replcate;
 		}
 
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
             if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
             $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
+            $fileprofile['name'] =  $unique_file;
             }elseif($media_type == 'video/mp4'){
             $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
+            $fileprofile['name'] =  $unique_file;
             }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
         //     if (!$file && is_wp_error($imagePath)) {
         //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
         // }
 		}
 		$add['foto_profile_kamar'] = isset($imagePath) ? strval($imagePath) : '#';
-	
 
 		$idkamar = $this->MSudi->AddData('tbl_kamar_hotel',$add);
+		// $idavailability = $this->MSudi->AddData('tbl_availability',$add2);
 		$add1['id_kamar_hotel']=$idkamar;
+		$add2['id_kamar_hotel']=$idkamar;
+		$this->MSudi->AddData('tbl_availability',$add2);
 		$this->MSudi->AddData('tbl_payment',$add1);
 		redirect(site_url('Welcome/DataKamarHotel'));
 	}
@@ -2682,6 +3063,7 @@ class Welcome extends CI_Controller
 		$id_kamar = $this->input->post('id_kamar');
 			
 		$id_payment = $this->input->post('id_payment');
+		$id_availability = $this->input->post('id_availability');
 		$update['id_hotel'] = $this->input->post('id_hotel');
 		$update['nama_kamar'] = $this->input->post('nama_kamar');
 		$update['jumlah_kamar'] = $this->input->post('jumlah_kamar');
@@ -2702,7 +3084,24 @@ class Welcome extends CI_Controller
 		$update1['updated_date'] =  date("Y-m-d H:i:s");
 		
 		$update1['is_active'] = 1;
+		$expAvailibility = [];
+		$endDate = $this->input->post('end');		
+		$startDate = $this->input->post('start');
+		a:		
+			if ($startDate != $endDate){
+				array_push($expAvailibility,$startDate);
+				$startDate = date('Y-m-d', strtotime($startDate. ' + 1 days'));							
+				goto a;
+			}else{
+				array_push($expAvailibility,$startDate);
+			}
 
+
+		$update2['availability_year'] = null;
+		$update2['availability_month'] = null;
+		$update2['availability_date'] = json_encode($expAvailibility); 
+		$update2['id_hotel']	=	$update['id_hotel']; 
+		$update2['is_active'] = 1;
 
 		$imagePathCollections = [];
 		$file_collections = file_exists($_FILES['file']['tmp_name'][0]) ? $_FILES["file"] : '';
@@ -2726,27 +3125,28 @@ class Welcome extends CI_Controller
 			$update['foto_kamar'] = $replcate;
 		}
 
-		$file = file_exists($_FILES['file']['tmp_name']) ? $_FILES["file"] : '';
-		if ($file !== '')  {
-            $media_type =  $_FILES['file']['type'];
+		$fileprofile = file_exists($_FILES['fileprofile']['tmp_name']) ? $_FILES["fileprofile"] : '';
+		if ($fileprofile !== '')  {
+            $media_type =  $_FILES['fileprofile']['type'];
             if($media_type == 'image/jpeg' || $media_type == 'image/jpg' || $media_type == 'image/png'){
             $unique_file = uniqid() . '.jpeg';
-            $file['name'] =  $unique_file;
+            $fileprofile['name'] =  $unique_file;
             }elseif($media_type == 'video/mp4'){
             $unique_file = uniqid() . '.mp4';
-            $file['name'] =  $unique_file;
+            $fileprofile['name'] =  $unique_file;
             }
-            $imagePath = $this->UploadBlob($file['name'],$file['tmp_name'],'file');
+            $imagePath = $this->UploadBlob($fileprofile['name'],$fileprofile['tmp_name'],'fileprofile');
         //     if (!$file && is_wp_error($imagePath)) {
         //     $errors[] = __('Error : ' . $imagePath->get_error_messages(), 'bnr');
         // }
 		}
 		$update['foto_profile_kamar'] = isset($imagePath) ? strval($imagePath) : '#';
-	
+
 
 
 		$this->MSudi->UpdateData('tbl_kamar_hotel', 'id_kamar', $id_kamar, $update);
 		$this->MSudi->UpdateData('tbl_payment', 'id_payment', $id_payment, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_kamar_hotel', $id_kamar, $update2);
 		redirect(site_url('Welcome/DataKamarHotel'));
 	}
 	public function DeleteDataKamarHotel()
@@ -2763,8 +3163,10 @@ class Welcome extends CI_Controller
 		$update1['deleted_by'] = $data['nama'];
 		$update1['deleted_date'] = date("Y-m-d H:i:s"); 
 		
-		$this->MSudi->UpdateData('tbl_payment', 'id_kamar_hotel', $id_kamar, $update1);
+		$update2['is_active'] = 0;
 		$this->MSudi->UpdateData('tbl_kamar_hotel', 'id_kamar', $id_kamar, $update);
+		$this->MSudi->UpdateData('tbl_payment', 'id_kamar_hotel', $id_kamar, $update1);
+		$this->MSudi->UpdateData('tbl_availability', 'id_kamar_hotel', $id_kamar, $update2);
 		redirect(site_url('Welcome/DataKamarHotel'));
 	}
 

@@ -32,6 +32,7 @@
                             <th>Rating</th>
                             <th>Keterangan Wisata</th>
                             <th>Foto Wisata</th>
+                            <th>Foto Profile Wisata</th>
                             <th>Price</th>
                             <th>Creted BY</th>
                             <th>Creted Date</th>
@@ -73,6 +74,9 @@
             }
 				?> 
                   </td>      
+                  <td ><img width="50px" height="50px" src="<?php echo $ReadDS->foto_profile_wisata; ?>"></td>        
+                 
+                 
                    <td><?php echo $ReadDS->price; ?></td>
                                     <td><?php echo $ReadDS->created_by; ?></td>
                                     <td><?php echo $ReadDS->created_date; ?></td>

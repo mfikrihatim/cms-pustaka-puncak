@@ -45,6 +45,9 @@
               foreach ($DataKamarHotel as $ReadDS) {
                 $arrayfotokamar = json_decode($ReadDS->foto_kamar, TRUE);
                 $fotos = $arrayfotokamar;
+
+                $arrayfotoprofilekamar = json_decode($ReadDS->foto_profile_kamar, TRUE);
+                $fotoprofile = $arrayfotoprofilekamar;
             ?>
                 <tr>
                   <td><?php echo $ReadDS->id_kamar; ?></td>
