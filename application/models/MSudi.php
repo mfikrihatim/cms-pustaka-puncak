@@ -6,7 +6,15 @@ class MSudi extends CI_Model
     function AddData($tabel, $data=array())
     {
         $this->db->insert($tabel,$data);
+        $last_id = $this->db->insert_id();
+        return $last_id;
     }
+    function AddData1($tabel1,$tabel2,$data1=array(),$data2=array())
+    {
+        $this->db->insert($tabel1,$data1); 
+        $this->db->insert($tabel2,$data2);
+    }
+
 
     function UpdateData($tabel,$fieldid,$fieldvalue,$data=array())
     {
@@ -23,10 +31,23 @@ class MSudi extends CI_Model
         $query= $this->db->get($tabel);
         return $query->result();
     }
+    function GetData1($tabel, $field, $value)
+    {
+        $this->db->order_by($field, $value);
+        $query= $this->db->get($tabel);
+        return $query->result();
+    }
 
     function GetDataWhere($tabel,$id,$nilai)
     {
         $this->db->where($id,$nilai);
+        $query= $this->db->get($tabel);
+        return $query;
+    }
+    function GetDataWhere1($tabel,$id,$nilai,$field,$value)
+    {
+        $this->db->where($id,$nilai);
+        $this->db->order_by($field, $value);
         $query= $this->db->get($tabel);
         return $query;
     }
@@ -100,4 +121,15 @@ class MSudi extends CI_Model
         return $query;
     }
 
+    function GetDataJoinWhere2($tbl1,$tbl2,$tbl3,$param, $id, $value)
+    {
+        $this->db->select('*');
+        $this->db->from($tbl1);
+        $this->db->from($tbl2);
+        $this->db->join($tbl3,$param);
+        $this->db->where($id,$value);
+        // $this->db->where($id,$value);
+        $query=$this->db->get();
+        return $query;
+    }
 }

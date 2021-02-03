@@ -1,6 +1,6 @@
 <div class="box">
 	<div class="box-header with-border">
-		<h3 class="box-title">Tambah Data Principal</h3>
+		<h3 class="box-title">Tambah Data Customer</h3>
 		<div class="box-tools pull-right">
 			<button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
 				<i class="fa fa-minus"></i></button>
@@ -9,7 +9,7 @@
 		</div>
 	</div>
 	<div class="box-body">
-		<form action="<?php echo site_url('Welcome/AddDataPrincipal'); ?>" method="post" enctype="multipart/form-data">
+		<form action="<?php echo site_url('Welcome/AddDataCostumer'); ?>" method="post" enctype="multipart/form-data">
 			<div class="box-body">
 				<!-- <div class="form-group">
 					<label>Kode Image</label>
